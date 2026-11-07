@@ -2,20 +2,15 @@
     background-image: linear-gradient(to bottom, #ffffff 20%, #fff8fc 47%, var(--color-pink-soft) 100%);
 }
 
-.calm-page.is-breathing {
-    background-image: linear-gradient(to bottom, #ffffff 0%, #f9deed 24%, #f4c8e0 100%);
-}
-
-.calm-page.is-breathing::after {
-    background: linear-gradient(to bottom, #ffffff 0%, #f9deed 24%, #f4c8e0 100%);
-}
 
 .calm-page .waves {
     transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    transform: opacity(1);
 }
 
 .calm-page.is-breathing .waves {
-    transform: translateY(80px);
+    transform: translateY(140px);
+    transform: opacity(0.5);
 }
 
 .calm-screen {
@@ -109,17 +104,17 @@
 
 .calm-breath__rings[data-phase="inhale"] .calm-breath__core {
     --breath-duration: 4s;
-    transform: translate(-50%, -50%) scale(1.03);
+    transform: scale(1.39);
 }
 
 .calm-breath__rings[data-phase="hold"] .calm-breath__core {
     --breath-duration: 2s;
-    transform: translate(-50%, -50%) scale(1.03);
+    transform: scale(1.39);
 }
 
 .calm-breath__rings[data-phase="exhale"] .calm-breath__core {
     --breath-duration: 6s;
-    transform: translate(-50%, -50%) scale(0.99);
+    transform: scale(1);
 }
 
 .calm-breath__ring,
@@ -135,6 +130,10 @@
     width: 100%;
     height: 100%;
     background: rgba(236, 172, 208, 0.14);
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: heartMove 8s ease-in-out infinite;
 }
 
 .calm-breath__ring--middle {
@@ -145,6 +144,8 @@
 
 .calm-breath__core {
     display: flex;
+    inset: 0;
+    margin: auto;
     width: 56%;
     height: 56%;
     flex-direction: column;
@@ -153,7 +154,9 @@
     background: var(--color-white);
     box-shadow: 0 0px 22px rgba(214, 22, 131, 0.418);
     text-align: center;
-    transition: transform var(--breath-duration, 0.45s) linear;
+    transform: scale(1);
+    transform-origin: center;
+    transition: transform var(--breath-duration, 0.45s) cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .calm-breath__phase {
@@ -170,13 +173,13 @@
 }
 
 .calm-guide {
-    width: min(76vw, 19.2rem);
-    height: 11rem;
+    width: min(84vw);
+    height: 11.2rem;
     margin-top: 1rem;
-    padding: 1.1rem 0.75rem 0.8rem;
+    padding: 1rem;
     border: 2px solid rgba(255, 255, 255, 0.95);
-    border-radius: 1.9rem;
-    background-image: linear-gradient(to top, rgba(255, 255, 255, 0.3), white);
+    border-radius: 2.4rem;
+    background-image: linear-gradient(to top, rgba(255, 255, 255, 0.2), white);
     box-shadow: 0 2px 10px rgba(124, 70, 103, 0.2);
     text-align: center;
     -webkit-backdrop-filter: blur(2px);
@@ -209,8 +212,8 @@
 .calm-guide__step:not(:last-child)::after {
     position: absolute;
     top: 1.05rem;
-    left: calc(50% + 1.1rem);
-    width: calc(100% - 2.2rem);
+    left: calc(75% + 1.2rem);
+    width: calc(50% - 2.4rem);
     height: 1px;
     background: #f1c3dc;
     content: "";
@@ -218,8 +221,9 @@
 
 .calm-guide__icon {
     display: grid;
-    width: 2.15rem;
-    height: 2.15rem;
+    width: 2.4rem;
+    height: 2.4rem;
+    margin-bottom: 4px;
     place-items: center;
     border-radius: 50%;
     background: #e99dca;
@@ -230,14 +234,14 @@
 .calm-guide__name {
     margin-top: 0.35rem;
     color: var(--color-ink);
-    font-size: 0.78rem;
+    font-size: 0.9rem;
     white-space: nowrap;
 }
 
 .calm-guide__duration {
     margin-top: 0.15rem;
     color: #e45c9f;
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     white-space: nowrap;
 }
 
@@ -416,6 +420,7 @@
 
 @media (prefers-reduced-motion: reduce) {
     .calm-breath__rings,
+    .calm-breath__core,
     .calm-page .waves,
     .calm-start {
         transition-duration: 0.01ms;
