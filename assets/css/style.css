@@ -8,7 +8,7 @@
     --color-pink-deep: #D52D84;
     --color-pink-soft: #FFD4EE;
     --color-white: #ffffff;
-    --color-nav-glass: #e5b7cfc7;
+    --color-nav-glass: #F0CEE0;
     --color-selector: #FFB7DC;
     --radius-pill: 50px;
     --shadow-button: 0 8px 18px rgba(211, 43, 130, 0.329);
@@ -69,7 +69,7 @@ body::after {
     display: flex;
     justify-content: space-between;
     align-items: space-between;
-    margin-top: 7dvh;
+    margin-top: 6dvh;
     height: auto;
     max-width: 90%;
     width: 90%; 
@@ -103,7 +103,7 @@ h1{
 }
 
 .line{
-    width: 70%;
+    width: 65%;
     margin: 1dvh auto;
 }
 
@@ -125,7 +125,7 @@ h1{
 
 .tp p{
     display: inline;
-    margin: 0px 1dvh;
+    margin: 0px 1.2dvh;
     opacity: 0.8;
 }
 
@@ -133,12 +133,12 @@ h1{
   padding: 3dvh;
   width: 80%;
   margin: 0 auto;
-  border: 1px solid white;
+  border: 2px solid #ffdcee;
   color: var(--color-white);
   border-radius: var(--radius-pill);
   cursor: pointer;
-  font-size: 1.2rem;
-  font-weight: 400;
+  font-size: 1.1rem;
+  font-weight: 500;
   user-select: none;
   box-shadow: var(--shadow-button);
   -webkit-user-select: none;
@@ -158,31 +158,32 @@ background-image:
 
 
 .btncontainer{
-    margin-top: 10dvh;
+    margin-top: 8dvh;
 }
 
 
 nav{
     background-color: var(--color-white);
     width: 88%;
-    height: 12%;
+    height: 13%;
     padding-bottom:0;
     bottom: 45px;
     position: absolute;
-    border-radius: 5dvh;
+    border-radius: 6dvh;
     z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 8px 13px rgba(0, 0, 0, 0.13);
 }
 
 .nav-glass{
     background-color: var(--color-nav-glass);
-    border-radius: 4dvh 4dvh;
-    height: 86%;
+    border-radius: 4.4dvh 4.4dvh;
+    height: 91%;
     width: 98%;
     position: absolute;
-    filter: blur(12px);
+    filter: blur(8px);
 }
 
 .btn-nav {
@@ -199,6 +200,7 @@ nav{
     color: var(--color-muted);
     border-radius: 3.5dvh;
     display: flex;
+    font-size: 0.8rem;
     align-items: center;
     flex-direction: column;
     justify-content: center;
@@ -212,28 +214,28 @@ nav{
 .home.active,
 .umore.active {
     color: var(--color-accent);
-    transform: scale(1.03);
+    transform: scale(1.1);
 }
 
 .selettore {
     position: absolute;
 
-    width: 36%;
-    height: 100%;
+    width: 38%;
+    height: 99%;
 
     left: 0;
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.075);
     background: var(--color-selector);
-    background: radial-gradient(circle, rgba(255, 183, 220, 0.6) 52%, rgba(255, 255, 255, 0.6) 100%);
-    border-radius: 3.9dvh;
-    border: 0.5px solid white;
+    background: radial-gradient(circle, #ffc5e3bd 45%, rgb(255, 255, 255) 100%);
+    border-radius: 5dvh;
+    border: 1.9px solid rgba(255, 255, 255, 0.596);
     transform-origin: center;
     transition: transform var(--duration-selector) cubic-bezier(.22, 1, .36, 1);
     z-index: 0;
 }
 
 .btn-nav i{
-    font-size: 32px;
+    font-size: 28px;
     margin-bottom: -4px;
 }
 
@@ -243,7 +245,7 @@ nav{
     height: 50%;
     overflow: hidden;
     pointer-events: none;
-    bottom: -4dvh;
+    bottom: 0dvh;
 }
 
 .wave1, .wave2, .wave3 {
