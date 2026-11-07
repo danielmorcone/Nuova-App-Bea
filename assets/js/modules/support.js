@@ -8,7 +8,7 @@ export function setupSupportButton() {
     clearTimeout(holdTimer);
     button.classList.add('pressing');
     holdTimer = window.setTimeout(() => {
-      window.location.href = new URL('../../pages/calma.html', import.meta.url).href;
+      window.location.href = new URL('../../../pages/calma.html', import.meta.url).href;
     }, 2000);
   };
 

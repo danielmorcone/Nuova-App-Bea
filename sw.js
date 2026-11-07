@@ -1,15 +1,18 @@
 // Incrementa questa versione quando cambi i file memorizzati offline.
-const CACHE_NAME = 'app-v5';
+const CACHE_NAME = 'app-v9';
 const appFile = path => new URL(path, self.registration.scope).href;
 const ASSETS = [
   './',
   'index.html',
   'pages/calma.html',
   'assets/css/style.css',
+  'assets/css/calma.css',
   'assets/js/app.js',
+  'assets/js/calma.js',
   'assets/js/modules/pwa.js',
   'assets/js/modules/support.js',
   'assets/js/modules/navigation.js',
+  'assets/js/modules/calma.js',
   'manifest.json',
   'assets/images/waves/wave1.png',
   'assets/images/waves/wave2.png',
