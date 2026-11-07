@@ -1,0 +1,297 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+:root {
+    --color-ink: #3C395E;
+    --color-muted: #826A77;
+    --color-accent: #D01D7A;
+    --color-pink: #FF86C4;
+    --color-pink-deep: #D52D84;
+    --color-pink-soft: #FFD4EE;
+    --color-white: #ffffff;
+    --color-nav-glass: #e5b7cfc7;
+    --color-selector: #FFB7DC;
+    --radius-pill: 50px;
+    --shadow-button: 0 8px 18px rgba(211, 43, 130, 0.329);
+    --motion-standard: 0.35s ease;
+    --duration-press: 2s;
+    --duration-selector: 0.45s;
+    --duration-heart: 4s;
+    --duration-wave: 20s;
+    --duration-wave-offset: 22s;
+}
+
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    width: 100%;
+    height: 100dvh;
+    margin: 0;
+    padding: 0;
+
+    position: fixed;
+    inset: 0;
+
+    overflow: hidden;
+    touch-action: none;
+    overscroll-behavior: none;
+
+    background-image: linear-gradient(to bottom, var(--color-white) 35%, var(--color-pink-soft) 100%);
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -10;
+    background: linear-gradient(to bottom, var(--color-white) 35%, var(--color-pink-soft) 100%);
+}
+
+.main{
+    display: flex;
+    justify-content: space-between;
+    align-items: space-between;
+    margin-top: 7dvh;
+    height: auto;
+    max-width: 90%;
+    width: 90%; 
+    margin-left: auto;
+    margin-right: auto;
+    flex-direction: column;
+    text-align: center;
+    z-index: 1;
+}
+
+.heart{
+    min-width: 12dvh;
+    min-height: 12dvh;
+    position: relative;
+    margin: 0dvh auto 1dvh auto;
+    animation: heartMove var(--duration-heart) ease-in-out infinite;
+}
+
+h1{
+    font-size: 1.4rem;
+    color: var(--color-ink);
+    margin: 0px;
+    padding: 0px;
+    font-weight: 400;
+}
+
+.bea{
+    margin-bottom: -1dvh;
+    font-weight: 600;
+    font-size: 3.5rem;
+}
+
+.line{
+    width: 70%;
+    margin: 1dvh auto;
+}
+
+.chill{
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--color-ink);
+    margin-top: 4dvh;
+    padding: 0px;
+    font-weight: 300;
+    line-height: 180%;
+}
+
+ span{
+    color: var(--color-accent);
+    font-weight: 500;
+    display: inline-block;
+}
+
+.tp p{
+    display: inline;
+    margin: 0px 1dvh;
+    opacity: 0.8;
+}
+
+.btn {
+  padding: 3dvh;
+  width: 80%;
+  margin: 0 auto;
+  border: 1px solid white;
+  color: var(--color-white);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: 400;
+  user-select: none;
+  box-shadow: var(--shadow-button);
+  -webkit-user-select: none;
+background-image: 
+    linear-gradient(to right, var(--color-white) 25%, transparent 50%),
+    linear-gradient(var(--color-pink), var(--color-pink-deep));
+  background-size: 300% 100%, 100% 100%;
+  background-position: 100% 0, 0 0; 
+  transition: background-position var(--duration-press) ease, color var(--duration-press) ease, transform var(--duration-press) ease;
+}
+
+.btn.pressing {
+  background-position: 0% 0, 0 0;
+  transform: scale(1.05);
+  color: var(--color-accent);
+}
+
+
+.btncontainer{
+    margin-top: 10dvh;
+}
+
+
+nav{
+    background-color: var(--color-white);
+    width: 88%;
+    height: 12%;
+    padding-bottom:0;
+    bottom: 45px;
+    position: absolute;
+    border-radius: 5dvh;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-glass{
+    background-color: var(--color-nav-glass);
+    border-radius: 4dvh 4dvh;
+    height: 86%;
+    width: 98%;
+    position: absolute;
+    filter: blur(12px);
+}
+
+.btn-nav {
+    width: 90%;
+    height: 80%;
+    position: absolute;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: center;
+    justify-items: center;
+}
+
+.noi, .home, .umore{
+    color: var(--color-muted);
+    border-radius: 3.5dvh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    height: 90%;
+    width: 90%;
+    z-index: 1;
+    transition: color var(--motion-standard), transform var(--motion-standard);
+}
+
+.noi.active,
+.home.active,
+.umore.active {
+    color: var(--color-accent);
+    transform: scale(1.03);
+}
+
+.selettore {
+    position: absolute;
+
+    width: 36%;
+    height: 100%;
+
+    left: 0;
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.075);
+    background: var(--color-selector);
+    background: radial-gradient(circle, rgba(255, 183, 220, 0.6) 52%, rgba(255, 255, 255, 0.6) 100%);
+    border-radius: 3.9dvh;
+    border: 0.5px solid white;
+    transform-origin: center;
+    transition: transform var(--duration-selector) cubic-bezier(.22, 1, .36, 1);
+    z-index: 0;
+}
+
+.btn-nav i{
+    font-size: 32px;
+    margin-bottom: -4px;
+}
+
+.waves {
+    position: absolute;
+    width: 100%;
+    height: 50%;
+    overflow: hidden;
+    pointer-events: none;
+    bottom: -4dvh;
+}
+
+.wave1, .wave2, .wave3 {
+    width: 200%;
+    height: 100%;       /* riempiono il contenitore */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    object-fit: cover;  /* l'immagine si adatta senza deformarsi */
+}
+
+.wave1{
+    animation: waveMove var(--duration-wave) ease-in-out infinite;
+    filter: blur(1px);
+}
+
+.wave2{
+    animation: waveMove var(--duration-wave-offset) ease-in-out infinite;
+    animation-delay: -7s;
+    filter: blur(1px);
+}
+
+.wave3{
+    animation: waveMove var(--duration-wave-offset) ease-in-out infinite;
+    animation-delay: -4s;
+    filter: blur(2px);
+}
+
+@keyframes waveMove {
+    0% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(-50%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes heartMove {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
