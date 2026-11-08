@@ -21,10 +21,29 @@ export function setupBreathingGuide() {
   let cyclesCompleted = 0;
   let secondsRemaining = phases[0].seconds;
   let timerId;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function setTextImmediately(element, text) {
+    element.getAnimations().forEach(animation => animation.cancel());
+    element.textContent = text;
+  }
+
+  function animateTextLikeCountdown(element) {
+    if (prefersReducedMotion) return;
+
+    element.animate(
+      [
+        { opacity: 0.18, transform: 'scale(0.88)' },
+        { opacity: 1, transform: 'scale(1)' }
+      ],
+      { duration: 680, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }
+    );
+  }
 
   function showPhase(phase, seconds) {
-    phaseLabel.textContent = phase.name;
-    countLabel.textContent = `${seconds} ${seconds === 1 ? 'secondo' : 'secondi'}`;
+    setTextImmediately(phaseLabel, phase.name);
+    animateTextLikeCountdown(phaseLabel);
+    setTextImmediately(countLabel, `${seconds} ${seconds === 1 ? 'secondo' : 'secondi'}`);
     rings.dataset.phase = phase.key;
     updateGuide(phaseIndex);
   }
@@ -72,7 +91,7 @@ export function setupBreathingGuide() {
         return;
       }
 
-      countLabel.textContent = `${secondsRemaining} ${secondsRemaining === 1 ? 'secondo' : 'secondi'}`;
+      setTextImmediately(countLabel, `${secondsRemaining} ${secondsRemaining === 1 ? 'secondo' : 'secondi'}`);
       timerId = window.setTimeout(countDown, 1000);
     }
 
@@ -81,18 +100,9 @@ export function setupBreathingGuide() {
 
   function showCountdown(number) {
     rings.dataset.phase = 'countdown';
-    phaseLabel.textContent = 'Preparati';
-    countLabel.textContent = String(number);
-    countLabel.animate(
-      [
-        { opacity: 0.35, transform: 'scale(0.78)' },
-        { opacity: 1, transform: 'scale(1)' }
-      ],
-      {
-        duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 520,
-        easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
-      }
-    );
+    setTextImmediately(phaseLabel, 'Preparati');
+    setTextImmediately(countLabel, String(number));
+    animateTextLikeCountdown(countLabel);
   }
 
   function beginBreathingCountdown() {
@@ -122,8 +132,8 @@ export function setupBreathingGuide() {
     phaseIndex = 0;
     secondsRemaining = phases[0].seconds;
     rings.dataset.phase = 'idle';
-    phaseLabel.textContent = phases[0].name;
-    countLabel.textContent = `${secondsRemaining} secondi`;
+    setTextImmediately(phaseLabel, phases[0].name);
+    setTextImmediately(countLabel, `${secondsRemaining} secondi`);
     resetGuide();
     startButton.setAttribute('aria-pressed', 'false');
     startButton.innerHTML = '<i class="bi bi-play-fill" aria-hidden="true"></i><span>Inizia</span>';
