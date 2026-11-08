@@ -371,6 +371,11 @@ nav{
     transform: translateY(0);
 }
 
+.home-page.is-transitioning .support-transition__content--second {
+    opacity: 0;
+    transform: translateY(12px);
+}
+
 .home-page.is-transitioning .support-transition__content--first.is-hidden {
     opacity: 0;
     transform: translateY(-8px);

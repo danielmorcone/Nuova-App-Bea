@@ -43,10 +43,10 @@ export function setupSupportButton() {
 
         // Fallback nel caso transitionend non venga emesso (per esempio con motion ridotto).
         window.setTimeout(showSecondMessage, 1800);
-      }, 5200);
+      }, 3800);
 
-      window.setTimeout(() => document.body.classList.add('is-leaving'), 12000);
-      window.setTimeout(openCalmScreen, 14500);
+      window.setTimeout(() => document.body.classList.add('is-leaving'), 8400);
+      window.setTimeout(openCalmScreen, 10900);
     }, 2000);
   };
 
