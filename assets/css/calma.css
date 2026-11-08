@@ -1,4 +1,15 @@
+/*
+   SEZIONI DEL FOGLIO
+   1. NORMALE: stile predefinito e struttura dei componenti.
+   2. IS-BREATHING: override con .calm-page.is-breathing.
+   3. ANIMAZIONI / ALTRO: fasi, stati degli step, keyframe e media query.
+*/
+
+
+
+/* 1. NORMALE — impostazioni predefinite */
 .calm-page {
+    --calm-guide-active-height: 14rem;
     background-image: linear-gradient(to bottom, #ffffff 20%, #fff8fc 47%, var(--color-pink-soft) 100%);
 }
 
@@ -8,6 +19,7 @@
     transform: opacity(1);
 }
 
+/* 2. IS-BREATHING — sfondo e onde */
 .calm-page.is-breathing .waves {
     transform: translateY(140px);
     transform: opacity(0.5);
@@ -64,7 +76,15 @@
     font-size: 1.15rem;
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
+    transition: transform 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
 }
+
+.calm-icon-button:active {
+    transform: scale(0.9);
+    background-color: #f0b8d7;
+    box-shadow: 0 2px 8px rgba(141, 69, 111, 0.16);
+}
+
 .calm-icon-button i{
     color: var(--color-accent);
     font-size: 1.25rem;
@@ -85,35 +105,70 @@
     width: 100%;
     margin-top: 1.25rem;
     place-items: center;
+    transition: margin-top 1.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .calm-breath__rings {
     position: relative;
     width: min(76vw, 19rem);
     aspect-ratio: 1;
-    transition: width 0.5s ease;
+    transition: width 1.1s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .calm-page.is-breathing .calm-breath {
-    margin-top: 4rem;
+    margin-top: 1rem;
 }
 
 .calm-page.is-breathing .calm-breath__rings {
     width: min(89.5vw, 22.5rem);
 }
 
-.calm-breath__rings[data-phase="inhale"] .calm-breath__core {
+/* 3. ANIMAZIONI / ALTRO — trasformazioni sincronizzate alle fasi */
+.calm-breath__rings[data-phase="inhale"] {
     --breath-duration: 4s;
+}
+
+.calm-breath__rings[data-phase="inhale"] .calm-breath__core {
     transform: scale(1.39);
+}
+
+.calm-breath__rings[data-phase="inhale"] .calm-breath__ring--outer {
+    transform: scale(0.82);
+}
+
+.calm-breath__rings[data-phase="inhale"] .calm-breath__copy {
+    transform: scale(0.72);
+}
+
+.calm-breath__rings[data-phase="hold"] {
+    --breath-duration: 2s;
 }
 
 .calm-breath__rings[data-phase="hold"] .calm-breath__core {
-    --breath-duration: 2s;
     transform: scale(1.39);
 }
 
-.calm-breath__rings[data-phase="exhale"] .calm-breath__core {
+.calm-breath__rings[data-phase="hold"] .calm-breath__ring--outer {
+    transform: scale(0.82);
+}
+
+.calm-breath__rings[data-phase="hold"] .calm-breath__copy {
+    transform: scale(0.72);
+}
+
+.calm-breath__rings[data-phase="exhale"] {
     --breath-duration: 6s;
+}
+
+.calm-breath__rings[data-phase="exhale"] .calm-breath__core {
+    transform: scale(1);
+}
+
+.calm-breath__rings[data-phase="exhale"] .calm-breath__ring--outer {
+    transform: scale(1);
+}
+
+.calm-breath__rings[data-phase="exhale"] .calm-breath__copy {
     transform: scale(1);
 }
 
@@ -127,13 +182,14 @@
 }
 
 .calm-breath__ring--outer {
+    inset: 0;
+    margin: auto;
     width: 100%;
     height: 100%;
     background: rgba(236, 172, 208, 0.14);
-    position: absolute;
-    top: 0;
-    left: 0;
-    animation: heartMove 8s ease-in-out infinite;
+    transform: scale(1);
+    transform-origin: center;
+    transition: transform var(--breath-duration, 0.45s) cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .calm-breath__ring--middle {
@@ -161,15 +217,34 @@
 
 .calm-breath__phase {
     color: var(--color-ink) !important;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: 500 !important;
 }
 
 .calm-breath__count {
     margin-top: 0.45rem;
     color: #e33b91;
-    font-size: 0.82rem;
+    font-size: 0.9rem;
     font-weight: 400;
+}
+
+.calm-breath__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: scale(1);
+    transform-origin: center;
+    transition: transform var(--breath-duration, 0.45s) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.calm-breath__rings[data-phase="countdown"] .calm-breath__phase {
+    display: none;
+}
+
+.calm-breath__rings[data-phase="countdown"] .calm-breath__count {
+    margin-top: 0;
+    font-size: 2.2rem;
+    font-weight: 500;
 }
 
 .calm-guide {
@@ -184,6 +259,9 @@
     text-align: center;
     -webkit-backdrop-filter: blur(2px);
     backdrop-filter: blur(2px);
+    transition: margin-top 1.45s cubic-bezier(0.22, 1, 0.36, 1),
+        height 1.2s cubic-bezier(0.22, 1, 0.36, 1),
+        padding-top 1.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .calm-guide h2 {
@@ -198,6 +276,7 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
     margin-top: 1.45rem;
     list-style: none;
+    transition: margin-top 1.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .calm-guide__step {
@@ -207,6 +286,7 @@
     flex-direction: column;
     align-items: center;
     color: var(--color-ink);
+    transition: opacity 420ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .calm-guide__step:not(:last-child)::after {
@@ -217,6 +297,7 @@
     height: 1px;
     background: #f1c3dc;
     content: "";
+    transition: background-color 420ms ease;
 }
 
 .calm-guide__icon {
@@ -229,6 +310,8 @@
     background: #e99dca;
     color: var(--color-white);
     font-size: 1.1rem;
+    box-shadow: 0 0 0 rgba(233, 157, 202, 0);
+    transition: background-color 420ms ease, box-shadow 420ms ease, transform 420ms ease;
 }
 
 .calm-guide__name {
@@ -236,6 +319,7 @@
     color: var(--color-ink);
     font-size: 0.9rem;
     white-space: nowrap;
+    transition: color 420ms ease;
 }
 
 .calm-guide__duration {
@@ -243,6 +327,7 @@
     color: #e45c9f;
     font-size: 0.75rem;
     white-space: nowrap;
+    transition: color 420ms ease;
 }
 
 .calm-page.is-breathing .calm-info-button,
@@ -251,22 +336,73 @@
     display: none;
 }
 
+/* 2. IS-BREATHING — spostamento della guida e pulsante Interrompi */
 .calm-page.is-breathing .calm-guide {
-    height: 7.9rem;
-    margin-top: 5.1rem;
-    padding-top: 1.6rem;
+    height: var(--calm-guide-active-height);
+    margin-top: 3rem;
+    margin-bottom: calc(1.25rem + env(safe-area-inset-bottom));
+    padding-top: 1.2rem;
+    
 }
 
 .calm-page.is-breathing .calm-guide__steps {
     margin-top: 0;
 }
 
+.calm-stop {
+    display: none;
+    width: min(67vw, 17rem);
+    height: 3.4rem;
+    margin: 1.4rem auto 0;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    border: 2px solid #ffdcee;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(#ff83c2, #d72d8a);
+    box-shadow: 0 7px 16px rgba(211, 43, 130, 0.26);
+    color: var(--color-white);
+    cursor: pointer;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 500;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform var(--motion-standard), filter var(--motion-standard);
+}
+
+.calm-page.is-breathing .calm-stop {
+    display: flex;
+}
+
+.calm-stop:active {
+    transform: scale(0.97);
+    filter: brightness(1.04);
+}
+
+.calm-stop i {
+    font-size: 1.1rem;
+}
+
 .calm-guide__step[data-state="complete"] .calm-guide__icon {
     background: #b7dfc1;
 }
 
+.calm-guide__step[data-state="complete"]:not(:last-child)::after {
+    background: #b7dfc1;
+}
+
+.calm-guide__step[data-state="complete"] .calm-guide__icon i {
+    animation: calm-step-check 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 .calm-guide__step[data-state="active"] .calm-guide__icon {
     background: #e99dca;
+    box-shadow: 0 5px 15px rgba(222, 96, 165, 0.28);
+    animation: calm-step-pulse 2.2s ease-in-out infinite;
+}
+
+.calm-guide__step[data-state="active"] {
+    transform: translateY(-2px);
 }
 
 .calm-guide__step[data-state="active"] .calm-guide__name,
@@ -279,8 +415,30 @@
     color: var(--color-muted);
 }
 
-.calm-guide__step[data-state="upcoming"] {
-    opacity: 0.65;
+@keyframes calm-step-pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 3px 10px rgba(222, 96, 165, 0.18);
+    }
+    50% {
+        transform: scale(1.08);
+        box-shadow: 0 6px 17px rgba(222, 96, 165, 0.34);
+    }
+}
+
+@keyframes calm-step-check {
+    0% {
+        opacity: 0;
+        transform: scale(0.55) rotate(-18deg);
+    }
+    70% {
+        opacity: 1;
+        transform: scale(1.18) rotate(4deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0);
+    }
 }
 
 .calm-start {
@@ -318,15 +476,31 @@
     padding: 1.7rem;
     border: 1px solid rgba(255, 255, 255, 0.95);
     border-radius: 1.6rem;
+    margin: auto;
     background: rgba(255, 255, 255, 0.96);
     box-shadow: 0 12px 36px rgba(80, 44, 73, 0.2);
     color: var(--color-ink);
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    transition: opacity 220ms ease, transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.calm-info.is-opening,
+.calm-info.is-closing {
+    opacity: 0;
+    transform: scale(0.94) translateY(0.5rem);
 }
 
 .calm-info::backdrop {
     background: rgba(62, 43, 60, 0.2);
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
+    transition: background-color 220ms ease;
+}
+
+.calm-info.is-opening::backdrop,
+.calm-info.is-closing::backdrop {
+    background: rgba(62, 43, 60, 0);
 }
 
 .calm-info h2 {
@@ -406,23 +580,45 @@
     }
 
     .calm-page.is-breathing .calm-breath {
-        margin-top: 2rem;
+        margin-bottom: 1rem;
     }
 
     .calm-page.is-breathing .calm-breath__rings {
         width: min(78vw, 18rem);
     }
 
-    .calm-page.is-breathing .calm-guide {
-        margin-top: 2rem;
+
+    .calm-page.is-breathing .calm-stop {
+        height: 2.8rem;
+        margin-top: 0.45rem;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .calm-breath__rings,
+    .calm-breath,
     .calm-breath__core,
+    .calm-breath__copy,
+    .calm-breath__ring--outer,
+    .calm-breath__phase,
+    .calm-breath__count,
     .calm-page .waves,
-    .calm-start {
+    .calm-start,
+    .calm-stop,
+    .calm-guide,
+    .calm-guide__steps,
+    .calm-guide__step,
+    .calm-guide__icon,
+    .calm-guide__name,
+    .calm-guide__duration,
+    .calm-icon-button,
+    .calm-info,
+    .calm-info::backdrop {
         transition-duration: 0.01ms;
+    }
+
+    .calm-guide__step[data-state="active"] .calm-guide__icon,
+    .calm-guide__step[data-state="complete"] .calm-guide__icon i {
+        animation: none;
     }
 }

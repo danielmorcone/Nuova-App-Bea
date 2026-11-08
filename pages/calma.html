@@ -42,8 +42,10 @@
                 <div class="calm-breath__ring calm-breath__ring--outer" aria-hidden="true"></div>
                 <div class="calm-breath__ring calm-breath__ring--middle" aria-hidden="true"></div>
                 <div class="calm-breath__core">
-                    <p class="calm-breath__phase" id="breath-phase" aria-live="polite">Inspira</p>
-                    <p class="calm-breath__count" id="breath-count">4 secondi</p>
+                    <div class="calm-breath__copy">
+                        <p class="calm-breath__phase" id="breath-phase" aria-live="polite">Inspira</p>
+                        <p class="calm-breath__count" id="breath-count">4 secondi</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -67,6 +69,10 @@
                     <span class="calm-guide__duration">6 secondi</span>
                 </li>
             </ol>
+            <button class="calm-stop" id="stop-breathing" type="button">
+                <i class="bi bi-stop-fill" aria-hidden="true"></i>
+                Interrompi
+            </button>
         </section>
 
         <button class="calm-start" id="start-breathing" type="button" aria-pressed="false">
@@ -75,9 +81,7 @@
         </button>
 
         <dialog class="calm-info" id="calm-info" aria-labelledby="info-title">
-            <form method="dialog">
-                <button class="calm-info__close" aria-label="Chiudi">×</button>
-            </form>
+            <button class="calm-info__close" type="button" aria-label="Chiudi">×</button>
             <h2 id="info-title">Segui il tuo ritmo</h2>
             <p>Inspira per 4 secondi, trattieni per 2 ed espira per 6. Puoi fermarti quando vuoi.</p>
         </dialog>

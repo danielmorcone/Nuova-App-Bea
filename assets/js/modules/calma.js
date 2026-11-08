@@ -9,6 +9,7 @@ export function setupBreathingGuide() {
   const phaseLabel = document.querySelector('#breath-phase');
   const countLabel = document.querySelector('#breath-count');
   const startButton = document.querySelector('#start-breathing');
+  const stopButton = document.querySelector('#stop-breathing');
   const infoButton = document.querySelector('#open-info');
   const infoDialog = document.querySelector('#calm-info');
   const guideSteps = [...document.querySelectorAll('.calm-guide__step')];
@@ -17,6 +18,7 @@ export function setupBreathingGuide() {
 
   let isRunning = false;
   let phaseIndex = 0;
+  let cyclesCompleted = 0;
   let secondsRemaining = phases[0].seconds;
   let timerId;
 
@@ -57,6 +59,14 @@ export function setupBreathingGuide() {
       secondsRemaining -= 1;
 
       if (secondsRemaining === 0) {
+        if (phaseIndex === phases.length - 1) {
+          cyclesCompleted += 1;
+          if (cyclesCompleted === 4) {
+            stopBreathing();
+            return;
+          }
+        }
+
         phaseIndex = (phaseIndex + 1) % phases.length;
         runPhase();
         return;
@@ -69,9 +79,45 @@ export function setupBreathingGuide() {
     timerId = window.setTimeout(countDown, 1000);
   }
 
+  function showCountdown(number) {
+    rings.dataset.phase = 'countdown';
+    phaseLabel.textContent = 'Preparati';
+    countLabel.textContent = String(number);
+    countLabel.animate(
+      [
+        { opacity: 0.35, transform: 'scale(0.78)' },
+        { opacity: 1, transform: 'scale(1)' }
+      ],
+      {
+        duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 520,
+        easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
+      }
+    );
+  }
+
+  function beginBreathingCountdown() {
+    let number = 3;
+    showCountdown(number);
+
+    function countIn() {
+      number -= 1;
+
+      if (number === 0) {
+        runPhase();
+        return;
+      }
+
+      showCountdown(number);
+      timerId = window.setTimeout(countIn, 1000);
+    }
+
+    timerId = window.setTimeout(countIn, 1000);
+  }
+
   function stopBreathing() {
     window.clearTimeout(timerId);
     isRunning = false;
+    cyclesCompleted = 0;
     document.body.classList.remove('is-breathing');
     phaseIndex = 0;
     secondsRemaining = phases[0].seconds;
@@ -91,15 +137,60 @@ export function setupBreathingGuide() {
 
     isRunning = true;
     phaseIndex = 0;
+    cyclesCompleted = 0;
     document.body.classList.add('is-breathing');
     startButton.setAttribute('aria-pressed', 'true');
     startButton.innerHTML = '<i class="bi bi-stop-fill" aria-hidden="true"></i><span>Ferma</span>';
-    runPhase();
+    beginBreathingCountdown();
   });
 
+  stopButton?.addEventListener('click', stopBreathing);
+
   if (infoButton && infoDialog) {
-    infoButton.addEventListener('click', () => infoDialog.showModal());
-    infoDialog.addEventListener('close', () => infoButton.setAttribute('aria-expanded', 'false'));
-    infoButton.addEventListener('click', () => infoButton.setAttribute('aria-expanded', 'true'));
+    const closeButton = infoDialog.querySelector('.calm-info__close');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const closeDuration = prefersReducedMotion ? 0 : 240;
+    let isClosing = false;
+
+    function closeInfo() {
+      if (!infoDialog.open || isClosing) return;
+
+      isClosing = true;
+      infoDialog.classList.add('is-closing');
+      window.setTimeout(() => infoDialog.close(), closeDuration);
+    }
+
+    infoButton.addEventListener('click', () => {
+      if (infoDialog.open) return;
+
+      infoButton.animate(
+        [
+          { transform: 'scale(1)' },
+          { transform: 'scale(0.9)' },
+          { transform: 'scale(1)' }
+        ],
+        { duration: prefersReducedMotion ? 1 : 220, easing: 'ease-out' }
+      );
+
+      infoDialog.classList.remove('is-closing');
+      infoDialog.classList.add('is-opening');
+      infoDialog.showModal();
+      infoButton.setAttribute('aria-expanded', 'true');
+      window.requestAnimationFrame(() => infoDialog.classList.remove('is-opening'));
+    });
+
+    closeButton?.addEventListener('click', closeInfo);
+    infoDialog.addEventListener('cancel', event => {
+      event.preventDefault();
+      closeInfo();
+    });
+    infoDialog.addEventListener('click', event => {
+      if (event.target === infoDialog) closeInfo();
+    });
+    infoDialog.addEventListener('close', () => {
+      infoDialog.classList.remove('is-opening', 'is-closing');
+      infoButton.setAttribute('aria-expanded', 'false');
+      isClosing = false;
+    });
   }
 }
