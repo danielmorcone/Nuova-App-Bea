@@ -12,6 +12,9 @@ export function setupBreathingGuide() {
   const stopButton = document.querySelector('#stop-breathing');
   const infoButton = document.querySelector('#open-info');
   const infoDialog = document.querySelector('#calm-info');
+  const confirmDialog = document.querySelector('#confirm-stop-dialog');
+  const confirmYesButton = document.querySelector('#confirm-stop-yes');
+  const confirmNoButton = document.querySelector('#confirm-stop-no');
   const guideSteps = [...document.querySelectorAll('.calm-guide__step')];
 
   if (!rings || !phaseLabel || !countLabel || !startButton) return;
@@ -20,18 +23,20 @@ export function setupBreathingGuide() {
   let phaseIndex = 0;
   let cyclesCompleted = 0;
   let secondsRemaining = phases[0].seconds;
-  let timerId;
+  let timerId = null;
+  let timerDeadline = 0;
+  let pendingTimerCallback = null;
+  let pausedTimerDelay = null;
+  let isPausedForConfirmation = false;
+  let pausedExerciseAnimations = [];
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const backLink = document.querySelector('.calm-back');
   const calmScreen = document.querySelector('.calm-screen');
   let isNavigatingHome = false;
+  let pendingHomeNavigation = false;
 
-  backLink?.addEventListener('click', event => {
-    // Mantiene il comportamento normale per apertura in una nuova scheda.
-    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-
-    event.preventDefault();
+  function navigateHomeWithFade() {
     if (isNavigatingHome) return;
     isNavigatingHome = true;
 
@@ -41,6 +46,7 @@ export function setupBreathingGuide() {
       return;
     }
 
+    let fallbackTimer;
     const finishExit = transitionEvent => {
       if (transitionEvent.target !== calmScreen || transitionEvent.propertyName !== 'opacity') return;
       clearTimeout(fallbackTimer);
@@ -50,8 +56,67 @@ export function setupBreathingGuide() {
 
     calmScreen.addEventListener('transitionend', finishExit);
     document.body.classList.add('is-leaving-home');
-    const fallbackTimer = window.setTimeout(goHome, 1600);
+    fallbackTimer = window.setTimeout(goHome, 1600);
+  }
+
+  backLink?.addEventListener('click', event => {
+    // Mantiene il comportamento normale per apertura in una nuova scheda.
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+    event.preventDefault();
+    if (isNavigatingHome) return;
+    if (isRunning) {
+      pendingHomeNavigation = true;
+      askToStopBreathing();
+      return;
+    }
+
+    navigateHomeWithFade();
   });
+
+  function scheduleTimer(callback, delay = 1000) {
+    window.clearTimeout(timerId);
+    pendingTimerCallback = callback;
+    pausedTimerDelay = null;
+    timerDeadline = Date.now() + delay;
+    timerId = window.setTimeout(() => {
+      timerId = null;
+      timerDeadline = 0;
+      pendingTimerCallback = null;
+      callback();
+    }, delay);
+  }
+
+  function pauseBreathingTimer() {
+    if (timerId === null) return;
+    pausedTimerDelay = Math.max(0, timerDeadline - Date.now());
+    window.clearTimeout(timerId);
+    timerId = null;
+  }
+
+  function resumeBreathingTimer() {
+    if (!pendingTimerCallback) return;
+    scheduleTimer(pendingTimerCallback, pausedTimerDelay ?? 1000);
+  }
+
+  function pauseExerciseAnimations() {
+    pausedExerciseAnimations = [...document.querySelectorAll('.calm-screen, .calm-screen *')]
+      .flatMap(element => element.getAnimations())
+      .filter(animation => animation.playState === 'running');
+    pausedExerciseAnimations.forEach(animation => animation.pause());
+  }
+
+  function resumeExerciseAnimations() {
+    pausedExerciseAnimations.forEach(animation => {
+      if (animation.playState === 'paused') animation.play();
+    });
+    pausedExerciseAnimations = [];
+  }
+
+  function discardPausedExerciseAnimations() {
+    pausedExerciseAnimations.forEach(animation => animation.cancel());
+    pausedExerciseAnimations = [];
+  }
 
   function setTextImmediately(element, text) {
     element.getAnimations().forEach(animation => animation.cancel());
@@ -122,10 +187,10 @@ export function setupBreathingGuide() {
       }
 
       setTextImmediately(countLabel, `${secondsRemaining} ${secondsRemaining === 1 ? 'secondo' : 'secondi'}`);
-      timerId = window.setTimeout(countDown, 1000);
+      scheduleTimer(countDown);
     }
 
-    timerId = window.setTimeout(countDown, 1000);
+    scheduleTimer(countDown);
   }
 
   function showCountdown(number) {
@@ -148,14 +213,20 @@ export function setupBreathingGuide() {
       }
 
       showCountdown(number);
-      timerId = window.setTimeout(countIn, 1000);
+      scheduleTimer(countIn);
     }
 
-    timerId = window.setTimeout(countIn, 1000);
+    scheduleTimer(countIn);
   }
 
   function stopBreathing() {
     window.clearTimeout(timerId);
+    discardPausedExerciseAnimations();
+    timerId = null;
+    timerDeadline = 0;
+    pendingTimerCallback = null;
+    pausedTimerDelay = null;
+    isPausedForConfirmation = false;
     isRunning = false;
     cyclesCompleted = 0;
     document.body.classList.remove('is-breathing');
@@ -167,6 +238,34 @@ export function setupBreathingGuide() {
     resetGuide();
     startButton.setAttribute('aria-pressed', 'false');
     startButton.innerHTML = '<i class="bi bi-play-fill" aria-hidden="true"></i><span>Inizia</span>';
+    infoButton?.setAttribute('aria-label', 'Come funziona la respirazione');
+  }
+
+  function askToStopBreathing() {
+    if (!isRunning || isPausedForConfirmation || !confirmDialog) return;
+
+    pauseBreathingTimer();
+    pauseExerciseAnimations();
+    isPausedForConfirmation = true;
+    confirmDialog.showModal();
+  }
+
+  function resumeAfterConfirmation() {
+    if (!isPausedForConfirmation) return;
+
+    if (confirmDialog?.open) confirmDialog.close();
+    pendingHomeNavigation = false;
+    isPausedForConfirmation = false;
+    resumeExerciseAnimations();
+    resumeBreathingTimer();
+  }
+
+  function confirmStopBreathing() {
+    const shouldGoHome = pendingHomeNavigation;
+    if (confirmDialog?.open) confirmDialog.close();
+    pendingHomeNavigation = false;
+    stopBreathing();
+    if (shouldGoHome) navigateHomeWithFade();
   }
 
   startButton.addEventListener('click', () => {
@@ -181,10 +280,21 @@ export function setupBreathingGuide() {
     document.body.classList.add('is-breathing');
     startButton.setAttribute('aria-pressed', 'true');
     startButton.innerHTML = '<i class="bi bi-stop-fill" aria-hidden="true"></i><span>Ferma</span>';
+    infoButton?.setAttribute('aria-label', 'Chiedi conferma per fermare la respirazione');
     beginBreathingCountdown();
   });
 
-  stopButton?.addEventListener('click', stopBreathing);
+  stopButton?.addEventListener('click', askToStopBreathing);
+
+  confirmYesButton?.addEventListener('click', confirmStopBreathing);
+  confirmNoButton?.addEventListener('click', resumeAfterConfirmation);
+  confirmDialog?.addEventListener('cancel', event => {
+    event.preventDefault();
+    resumeAfterConfirmation();
+  });
+  confirmDialog?.addEventListener('click', event => {
+    if (event.target === confirmDialog) resumeAfterConfirmation();
+  });
 
   if (infoButton && infoDialog) {
     const closeButton = infoDialog.querySelector('.calm-info__close');
@@ -201,6 +311,11 @@ export function setupBreathingGuide() {
     }
 
     infoButton.addEventListener('click', () => {
+      if (isRunning) {
+        askToStopBreathing();
+        return;
+      }
+
       if (infoDialog.open) return;
 
       infoButton.animate(

@@ -283,9 +283,14 @@ nav{
     object-fit: cover;  /* l'immagine si adatta senza deformarsi */
 }
 
+.wave1 {
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
+}
+
 .wave1{
     animation: waveMove var(--duration-wave) ease-in-out infinite;
-    
 }
 
 .wave2{

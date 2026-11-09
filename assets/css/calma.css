@@ -357,10 +357,21 @@
     transition: color 420ms ease;
 }
 
-.calm-page.is-breathing .calm-info-button,
 .calm-page.is-breathing .calm-guide h2,
+.calm-page.is-breathing .calm-info-button,
 .calm-page.is-breathing .calm-start {
     display: none;
+}
+
+.calm-page.is-breathing .calm-back {
+    background: rgba(190, 188, 198, 0.48);
+    box-shadow: 0 4px 12px rgba(84, 77, 91, 0.06);
+    color: rgba(110, 103, 116, 0.72);
+    opacity: 0.76;
+}
+
+.calm-page.is-breathing .calm-back i {
+    color: rgba(110, 103, 116, 0.72);
 }
 
 /* 2. IS-BREATHING — spostamento della guida e pulsante Interrompi */
@@ -498,6 +509,10 @@
     font-size: 1.2rem;
 }
 
+.calm-start span {
+    color: var(--color-white);
+}
+
 .calm-info {
     width: min(86vw, 23rem);
     padding: 1.7rem;
@@ -560,6 +575,75 @@
     display: contents;
 }
 
+.calm-confirm {
+    width: min(86vw, 23rem);
+    padding: 1.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    border-radius: 1.6rem;
+    margin: auto;
+    background: rgba(255, 255, 255, 0.97);
+    box-shadow: 0 12px 36px rgba(80, 44, 73, 0.2);
+    color: var(--color-ink);
+    text-align: center;
+}
+
+.calm-confirm[open] {
+    animation: calm-confirm-enter 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.calm-confirm::backdrop {
+    background: rgba(62, 43, 60, 0.28);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+}
+
+.calm-confirm h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.calm-confirm p {
+    margin-top: 0.65rem;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    line-height: 1.55;
+}
+
+.calm-confirm__actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.35rem;
+}
+
+.calm-confirm__button {
+    min-height: 2.8rem;
+    flex: 1;
+    border: 1px solid #f3c9df;
+    border-radius: var(--radius-pill);
+    background: #fff7fb;
+    color: var(--color-ink);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 500;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.calm-confirm__button--yes {
+    border-color: transparent;
+    background: linear-gradient(#ff83c2, #d72d8a);
+    box-shadow: 0 5px 12px rgba(211, 43, 130, 0.2);
+    color: var(--color-white);
+}
+
+.calm-confirm__button:active {
+    transform: scale(0.97);
+}
+
+@keyframes calm-confirm-enter {
+    from { opacity: 0; transform: translateY(8px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 .waves {
     position: absolute;
     width: 100%;
@@ -576,6 +660,12 @@
     bottom: 0;
     left: 0;
     object-fit: cover;  /* l'immagine si adatta senza deformarsi */
+}
+
+.wave1 {
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
 }
 
 @media (max-height: 760px) {
@@ -651,8 +741,13 @@
     .calm-guide__duration,
     .calm-icon-button,
     .calm-info,
-    .calm-info::backdrop {
+    .calm-info::backdrop,
+    .calm-confirm {
         transition-duration: 0.01ms;
+    }
+
+    .calm-confirm[open] {
+        animation: none;
     }
 
     .calm-guide__step[data-state="active"] .calm-guide__icon,
