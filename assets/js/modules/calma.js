@@ -23,6 +23,36 @@ export function setupBreathingGuide() {
   let timerId;
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  const backLink = document.querySelector('.calm-back');
+  const calmScreen = document.querySelector('.calm-screen');
+  let isNavigatingHome = false;
+
+  backLink?.addEventListener('click', event => {
+    // Mantiene il comportamento normale per apertura in una nuova scheda.
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+    event.preventDefault();
+    if (isNavigatingHome) return;
+    isNavigatingHome = true;
+
+    const goHome = () => window.location.assign(backLink.href);
+    if (!calmScreen) {
+      goHome();
+      return;
+    }
+
+    const finishExit = transitionEvent => {
+      if (transitionEvent.target !== calmScreen || transitionEvent.propertyName !== 'opacity') return;
+      clearTimeout(fallbackTimer);
+      calmScreen.removeEventListener('transitionend', finishExit);
+      goHome();
+    };
+
+    calmScreen.addEventListener('transitionend', finishExit);
+    document.body.classList.add('is-leaving-home');
+    const fallbackTimer = window.setTimeout(goHome, 1600);
+  });
+
   function setTextImmediately(element, text) {
     element.getAnimations().forEach(animation => animation.cancel());
     element.textContent = text;

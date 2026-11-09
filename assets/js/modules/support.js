@@ -9,6 +9,26 @@ export function setupSupportButton() {
     window.location.href = new URL('../../../pages/calma.html', import.meta.url).href;
   };
 
+  const afterOpacityTransition = (element, callback, fallbackDelay = 1800) => {
+    if (!element) {
+      callback();
+      return;
+    }
+
+    let completed = false;
+    const finish = event => {
+      if (event && (event.target !== element || event.propertyName !== 'opacity')) return;
+      if (completed) return;
+      completed = true;
+      clearTimeout(fallbackTimer);
+      element.removeEventListener('transitionend', finish);
+      callback();
+    };
+
+    const fallbackTimer = window.setTimeout(() => finish(), fallbackDelay);
+    element.addEventListener('transitionend', finish);
+  };
+
   const startHold = () => {
     clearTimeout(holdTimer);
     button.classList.add('pressing');
@@ -25,9 +45,18 @@ export function setupSupportButton() {
       const secondMessage = transitionScreen.querySelector('.support-transition__content--second');
 
       const showSecondMessage = () => {
-        transitionScreen.classList.add('show-second');
         firstMessage?.setAttribute('aria-hidden', 'true');
         secondMessage?.setAttribute('aria-hidden', 'false');
+
+        afterOpacityTransition(secondMessage, () => {
+          // Dopo la breve permanenza, dissolve la frase e cambia pagina appena finita la dissolvenza.
+          window.setTimeout(() => {
+            afterOpacityTransition(secondMessage, openCalmScreen, 1600);
+            secondMessage?.classList.add('is-fading-out');
+          }, 650);
+        });
+
+        transitionScreen.classList.add('show-second');
       };
 
       window.setTimeout(() => {
@@ -36,17 +65,9 @@ export function setupSupportButton() {
           return;
         }
 
-        firstMessage.addEventListener('transitionend', event => {
-          if (event.propertyName === 'opacity') showSecondMessage();
-        }, { once: true });
+        afterOpacityTransition(firstMessage, showSecondMessage);
         firstMessage.classList.add('is-hidden');
-
-        // Fallback nel caso transitionend non venga emesso (per esempio con motion ridotto).
-        window.setTimeout(showSecondMessage, 1800);
-      }, 3800);
-
-      window.setTimeout(() => document.body.classList.add('is-leaving'), 8400);
-      window.setTimeout(openCalmScreen, 10900);
+      }, 2500);
     }, 2000);
   };
 

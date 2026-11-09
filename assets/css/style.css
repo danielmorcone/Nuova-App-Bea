@@ -285,24 +285,54 @@ nav{
 
 .wave1{
     animation: waveMove var(--duration-wave) ease-in-out infinite;
-    filter: blur(1px);
+    
 }
 
 .wave2{
     animation: waveMove var(--duration-wave-offset) ease-in-out infinite;
     animation-delay: -7s;
-    filter: blur(1px);
+    
 }
 
 .wave3{
     animation: waveMove var(--duration-wave-offset) ease-in-out infinite;
     animation-delay: -4s;
-    filter: blur(2px);
+    
 }
 
 .home-page .main,
 .home-page .nav {
-    transition: opacity 1400ms ease, transform 1400ms cubic-bezier(0.22, 1, 0.36, 1), filter 1400ms ease;
+    transition: opacity 1500ms ease, transform 1500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.home-page .main > .heart,
+.home-page .main > .testi,
+.home-page .main > .line,
+.home-page .main > .chill,
+.home-page .main > .btncontainer,
+.home-page .nav {
+    animation: home-content-enter 1200ms ease-out both;
+}
+
+.home-page .main > .heart {
+    animation-name: home-content-enter, heartMove;
+    animation-duration: 1200ms, var(--duration-heart);
+    animation-timing-function: ease-out, ease-in-out;
+    animation-iteration-count: 1, infinite;
+}
+
+.home-page .main > .testi { animation-delay: 150ms; }
+.home-page .main > .line { animation-delay: 300ms; }
+.home-page .main > .chill { animation-delay: 450ms; }
+.home-page .main > .btncontainer { animation-delay: 600ms; }
+.home-page .nav {
+    animation-delay: 750ms;
+    animation-fill-mode: backwards;
+}
+
+@keyframes home-content-enter {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .support-transition {
@@ -315,14 +345,14 @@ nav{
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: opacity 1400ms ease, visibility 0s linear 1400ms;
+    transition: opacity 1500ms ease, visibility 0s linear 1500ms;
 }
 
 .support-transition__content {
     text-align: center;
     opacity: 0;
     transform: translateY(12px);
-    transition: opacity 1400ms ease 180ms, transform 1500ms cubic-bezier(0.22, 1, 0.36, 1) 180ms;
+    transition: opacity 1500ms ease 180ms, transform 1500ms cubic-bezier(0.22, 1, 0.36, 1) 180ms;
 }
 
 .support-transition__content--second {
@@ -356,7 +386,6 @@ nav{
 .home-page.is-transitioning .nav {
     opacity: 0;
     transform: translateY(-10px);
-    filter: blur(5px);
     pointer-events: none;
 }
 
@@ -387,10 +416,11 @@ nav{
     transition-delay: 180ms;
 }
 
-.home-page.is-leaving .support-transition__content {
+.home-page.is-transitioning .support-transition.show-second .support-transition__content--second.is-fading-out {
     opacity: 0;
     transform: translateY(-8px);
-    transition: opacity 2000ms ease, transform 2200ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 1500ms ease, transform 1500ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: 0s;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -399,6 +429,17 @@ nav{
     .support-transition,
     .support-transition__content {
         transition-duration: 0.01ms;
+        transition-delay: 0s;
+    }
+
+    /* Mantiene le dissolvenze dei messaggi, riducendo solo i movimenti. */
+    .home-page.is-transitioning .support-transition__content {
+        transition: opacity 1500ms ease, transform 0.01ms linear;
+        transition-delay: 0s;
+    }
+
+    .home-page.is-transitioning .support-transition.show-second .support-transition__content--second.is-fading-out {
+        transition: opacity 1500ms ease, transform 0.01ms linear;
         transition-delay: 0s;
     }
 }

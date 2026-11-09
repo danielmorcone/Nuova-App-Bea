@@ -1,5 +1,5 @@
 // Incrementa questa versione quando cambi i file memorizzati offline.
-const CACHE_NAME = 'app-v35';
+const CACHE_NAME = 'app-v46';
 const appFile = path => new URL(path, self.registration.scope).href;
 const ASSETS = [
   './',
