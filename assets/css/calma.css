@@ -279,11 +279,11 @@
     height: 11.2rem;
     margin-top: 1rem;
     padding: 1rem;
+    text-align: center;
     border: 2px solid rgba(255, 255, 255, 0.95);
     border-radius: 2.4rem;
     background-image: linear-gradient(to top, rgba(255, 255, 255, 0.2), white);
     box-shadow: 0 2px 10px rgba(124, 70, 103, 0.2);
-    text-align: center;
     -webkit-backdrop-filter: blur(2px);
     backdrop-filter: blur(2px);
     transition: margin-top 1.45s cubic-bezier(0.22, 1, 0.36, 1),
@@ -579,7 +579,7 @@
     width: min(86vw, 23rem);
     padding: 1.7rem;
     border: 1px solid rgba(255, 255, 255, 0.95);
-    border-radius: 1.6rem;
+    border-radius: 2.4rem;
     margin: auto;
     background: rgba(255, 255, 255, 0.97);
     box-shadow: 0 12px 36px rgba(80, 44, 73, 0.2);
@@ -700,6 +700,7 @@
     position: relative;
     z-index: 2;
     display: flex;
+    margin-top: 1rem;
     width: 100%;
     flex-direction: column;
     align-items: center;
@@ -724,6 +725,12 @@
     animation: completion-element-enter 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+.calm-completion.is-visible .calm-completion__heart {
+    animation:
+        completion-element-enter 800ms cubic-bezier(0.22, 1, 0.36, 1) both,
+        heartMove 4s ease-in-out 800ms infinite;
+}
+
 .calm-completion.is-visible .calm-completion__intro h1 { animation-delay: 120ms; }
 .calm-completion.is-visible .calm-completion__praise { animation-delay: 260ms; }
 .calm-completion.is-visible .calm-completion__divider { animation-delay: 380ms; }
@@ -745,18 +752,18 @@
 
 @keyframes heartMove {
     0% {
-        transform: scale(1);
+        scale: 1;
     }
     50% {
-        transform: scale(1.05);
+        scale: 1.05;
     }
     100% {
-        transform: scale(1);
+        scale: 1;
     }
 }
 
 .calm-completion__intro h1 {
-    margin-top: 4rem;
+    margin-top: 2.5rem;
     color: var(--color-ink);
     font-size: clamp(2.75rem, 10vw, 3.25rem);
     font-weight: 600;
@@ -764,7 +771,7 @@
 }
 
 .calm-completion__praise {
-    margin-top: 1.8rem;
+    margin-top: 2.2rem;
     color: #e33b91;
     font-size: 1.35rem;
     line-height: 1.4;
@@ -790,7 +797,7 @@
 .calm-completion__question {
     margin-bottom: 1.7rem;
     color: var(--color-ink);
-    font-size: 1.45rem;
+    font-size: 1.3rem;
     text-align: center;
 }
 
@@ -799,11 +806,11 @@
     min-height: 3.9rem;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(255, 255, 255, 0.95);
+    border: 2px solid rgba(255, 255, 255, 0.95);
     border-radius: var(--radius-pill);
     cursor: pointer;
     font: inherit;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     font-weight: 500;
     -webkit-tap-highlight-color: transparent;
     transition: transform 180ms ease, filter 180ms ease;
@@ -811,7 +818,8 @@
 
 .calm-completion__button--yes {
     width: min(68vw, 17rem);
-    background: linear-gradient(#fff, #f6e8f0b2);
+    border: 2px solid #f3c9df;
+    background: linear-gradient(#fff, #fff5fbd0);
     box-shadow: 0 5px 14px rgba(100, 66, 91, 0.12);
     color: #625874;
 }

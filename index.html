@@ -25,7 +25,7 @@
 
 <body class="home-page">
 
-    <div class="main">
+    <div class="main" id="home-screen">
 
         <img src="assets/images/illustrations/heart.png" class="heart" alt="">
         <div class="testi">
@@ -34,7 +34,7 @@
     </div>
         <img src="assets/images/illustrations/line.png" class="line" alt="">
         <p class="chill">Se stai avendo un attacco di panico,<br>
-prenditi un momento. <span> Respira</span>.</p>
+sono qui per te. <span> Tranquilla</span>.</p>
 
         <div class="btncontainer">
             <button class="btn" type="button">Ho bisogno di aiuto</button>
@@ -46,15 +46,17 @@ prenditi un momento. <span> Respira</span>.</p>
         
     </div>
 
+    <section class="empty-tab" id="noi-screen" aria-label="Noi" aria-hidden="true"></section>
+    <section class="empty-tab" id="umore-screen" aria-label="Umore" aria-hidden="true"></section>
 
         <nav class="nav">
             <div class="nav-glass"></div>
              <div class="btn-nav">
                 <div class="selettore"></div>
 
-                <div class="noi"><i class="bi bi-heart"></i>Noi</div>
-                <div class="home active"><i class="bi bi-house"></i>Home</div>
-                <div class="umore"><i class="bi bi-brightness-high"></i>Umore</div>
+                <div class="noi" role="button" tabindex="0" aria-label="Apri Noi"><i class="bi bi-heart"></i>Noi</div>
+                <div class="home active" role="button" tabindex="0" aria-label="Apri Home"><i class="bi bi-house"></i>Home</div>
+                <div class="umore" role="button" tabindex="0" aria-label="Apri Umore"><i class="bi bi-brightness-high"></i>Umore</div>
               </div>
         </nav>
 
