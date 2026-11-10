@@ -1,0 +1,350 @@
+.grounding-page {
+    background-image: linear-gradient(to bottom, #ffffff 20%, #fff8fc 47%, var(--color-pink-soft) 100%);
+    height: 100svh;
+}
+
+.grounding-page .waves {
+    bottom: 0;
+}
+
+.grounding-screen {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100svh;
+    opacity: 1;
+    transition: opacity 700ms ease;
+}
+
+.grounding-page.is-leaving .grounding-screen {
+    opacity: 0;
+}
+
+.grounding-header {
+    position: relative;
+    width: 100%;
+    padding-top: calc(env(safe-area-inset-top) + 2rem);
+    text-align: center;
+    animation: grounding-enter 850ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.grounding-header h1 {
+    color: var(--color-ink);
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1.2;
+    margin: 2rem 0 0;
+}
+
+.grounding-header p {
+    margin-top: 0.45rem;
+    color: #e33b91;
+    font-size: 0.95rem;
+}
+
+.grounding-divider {
+    width: 40%;
+    height: 1px;
+    margin: 1.45rem auto 0;
+    background: rgba(92, 72, 91, 0.16);
+}
+
+.grounding-back {
+    position: absolute;
+    top: calc(env(safe-area-inset-top) + 0.5rem);
+    left: 1.25rem;
+    display: grid;
+    width: 3.3rem;
+    height: 3.3rem;
+    place-items: center;
+    border-radius: 50%;
+    background: #f4eaf0;
+    box-shadow: 0 5px 16px rgba(141, 69, 111, 0.1);
+    color: #9b8da2;
+    font-size: 1.15rem;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 180ms ease, background-color 180ms ease;
+}
+
+.grounding-back:active {
+    transform: scale(0.92);
+    background: #ead9e4;
+}
+
+.grounding-confirm {
+    width: min(86vw, 23rem);
+    padding: 1.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    border-radius: 1.6rem;
+    margin: auto;
+    background: rgba(255, 255, 255, 0.97);
+    box-shadow: 0 12px 36px rgba(80, 44, 73, 0.2);
+    color: var(--color-ink);
+    text-align: center;
+}
+
+.grounding-confirm[open] {
+    animation: grounding-confirm-enter 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.grounding-confirm.is-closing {
+    pointer-events: none;
+    animation: grounding-confirm-exit 260ms ease-in both;
+}
+
+.grounding-confirm::backdrop {
+    background: rgba(62, 43, 60, 0.28);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    animation: grounding-confirm-backdrop-enter 320ms ease-out both;
+}
+
+.grounding-confirm.is-closing::backdrop {
+    animation: grounding-confirm-backdrop-exit 260ms ease-in both;
+}
+
+.grounding-confirm h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.grounding-confirm p {
+    margin-top: 0.65rem;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    line-height: 1.55;
+}
+
+.grounding-confirm__actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.35rem;
+}
+
+.grounding-confirm__button {
+    min-height: 2.8rem;
+    flex: 1;
+    border: 1px solid #f3c9df;
+    border-radius: var(--radius-pill);
+    background: #fff7fb;
+    color: var(--color-ink);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 500;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.grounding-confirm__button--no {
+    border-color: transparent;
+    background: linear-gradient(#ff83c2, #d72d8a);
+    box-shadow: 0 5px 12px rgba(211, 43, 130, 0.2);
+    color: var(--color-white);
+}
+
+.grounding-confirm__button:active {
+    transform: scale(0.97);
+}
+
+@keyframes grounding-confirm-enter {
+    from { opacity: 0; transform: translateY(12px) scale(0.94); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes grounding-confirm-backdrop-enter {
+    from { background-color: rgba(62, 43, 60, 0); }
+    to { background-color: rgba(62, 43, 60, 0.28); }
+}
+
+@keyframes grounding-confirm-exit {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(8px) scale(0.97); }
+}
+
+@keyframes grounding-confirm-backdrop-exit {
+    from { background-color: rgba(62, 43, 60, 0.28); }
+    to { background-color: rgba(62, 43, 60, 0); }
+}
+
+.grounding-content {
+    position: absolute;
+    top: 27svh;
+    left: 50%;
+    display: flex;
+    width: min(85vw, 28rem);
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    text-align: center;
+    transform: translateX(-50%);
+    transition: opacity 260ms ease, transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    animation: grounding-enter 850ms cubic-bezier(0.22, 1, 0.36, 1) 150ms backwards;
+}
+
+.grounding-content.is-changing {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+}
+
+.grounding-step-number {
+    color: #efafd0;
+    font-size: 2.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.grounding-step-title {
+    margin-top: 0.55rem;
+    color: var(--color-ink);
+    font-size: clamp(1.65rem, 7.2vw, 1.9rem);
+    font-weight: 500;
+    line-height: 1.25;
+}
+
+.grounding-step-description {
+    margin-top: 1.55rem;
+    color: var(--color-ink);
+    font-size: 0.98rem;
+    font-weight: 400;
+    line-height: 1.8;
+}
+
+.grounding-answer {
+    width: 88%;
+    height: 3.15rem;
+    padding: 0 1.25rem;
+    border: 0px solid #aaa2b5;
+    border-radius: var(--radius-pill);
+    margin-top: 3.45rem;
+    outline: none;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 8px rgba(82, 62, 86, 0.12);
+    color: var(--color-ink);
+    font-size: 1rem;
+    text-align: center;
+    user-select: text;
+    -webkit-user-select: text;
+    touch-action: manipulation;
+    transition: border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.grounding-answer::placeholder {
+    color: #aaa1b5;
+    opacity: 1;
+}
+
+.grounding-answer:focus {
+    border-color: #dc79ae;
+    box-shadow: 0 0 0 4px rgba(220, 121, 174, 0.13);
+}
+
+.grounding-next {
+    position: absolute;
+    bottom: 17dvh;
+    left: 50%;
+    display: flex;
+    width: min(49vw, 12rem);
+    height: 4.4rem;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffdcee;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(#ff83c2, #d72d8a);
+    box-shadow: 0 9px 18px rgba(211, 43, 130, 0.3);
+    color: var(--color-white);
+    cursor: pointer;
+    font: inherit;
+    font-size: 1.2rem;
+    font-weight: 500;
+    transform: translateX(-50%);
+    -webkit-tap-highlight-color: transparent;
+    animation: grounding-enter 850ms cubic-bezier(0.22, 1, 0.36, 1) 300ms backwards;
+    transition: filter 180ms ease, scale 180ms ease;
+}
+
+.grounding-next:active {
+    scale: 0.97;
+    filter: brightness(1.04);
+}
+
+.grounding-previous {
+    position: absolute;
+    bottom: calc(17dvh + 5rem);
+    left: 50%;
+    padding: 0.35rem 0.8rem;
+    border: 0;
+    background: transparent;
+    color: var(--color-muted);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.88rem;
+    transform: translateX(-50%);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.grounding-previous[hidden] {
+    display: none;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@keyframes grounding-enter {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (max-height: 760px) {
+    .grounding-content {
+        top: 25svh;
+    }
+
+    .grounding-answer {
+        margin-top: 2.2rem;
+    }
+
+    .grounding-next {
+        bottom: max(13dvh, calc(env(safe-area-inset-bottom) + 1rem));
+    }
+
+    .grounding-previous {
+        bottom: calc(max(13dvh, env(safe-area-inset-bottom) + 1rem) + 4.7rem);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .grounding-header,
+    .grounding-content,
+    .grounding-next {
+        animation: none;
+    }
+
+    .grounding-screen,
+    .grounding-content,
+    .grounding-back,
+    .grounding-answer,
+    .grounding-next {
+        transition-duration: 0.01ms;
+    }
+
+    .grounding-confirm[open] {
+        animation: none;
+    }
+
+    .grounding-confirm.is-closing {
+        animation: none;
+    }
+
+    .grounding-confirm::backdrop,
+    .grounding-confirm.is-closing::backdrop {
+        animation: none;
+    }
+}

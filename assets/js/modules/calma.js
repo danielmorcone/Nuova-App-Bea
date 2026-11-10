@@ -15,6 +15,9 @@ export function setupBreathingGuide() {
   const confirmDialog = document.querySelector('#confirm-stop-dialog');
   const confirmYesButton = document.querySelector('#confirm-stop-yes');
   const confirmNoButton = document.querySelector('#confirm-stop-no');
+  const completionScreen = document.querySelector('#breath-completion');
+  const completionYesButton = document.querySelector('#completion-yes');
+  const completionContinueButton = document.querySelector('#completion-continue');
   const guideSteps = [...document.querySelectorAll('.calm-guide__step')];
 
   if (!rings || !phaseLabel || !countLabel || !startButton) return;
@@ -29,6 +32,7 @@ export function setupBreathingGuide() {
   let pausedTimerDelay = null;
   let isPausedForConfirmation = false;
   let pausedExerciseAnimations = [];
+  let isClosingConfirmation = false;
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const backLink = document.querySelector('.calm-back');
@@ -65,13 +69,10 @@ export function setupBreathingGuide() {
 
     event.preventDefault();
     if (isNavigatingHome) return;
-    if (isRunning) {
-      pendingHomeNavigation = true;
-      askToStopBreathing();
-      return;
-    }
+    pendingHomeNavigation = true;
 
-    navigateHomeWithFade();
+    if (isRunning) askToStopBreathing();
+    else confirmDialog?.showModal();
   });
 
   function scheduleTimer(callback, delay = 1000) {
@@ -177,6 +178,7 @@ export function setupBreathingGuide() {
           cyclesCompleted += 1;
           if (cyclesCompleted === 4) {
             stopBreathing();
+            showCompletionScreen();
             return;
           }
         }
@@ -241,31 +243,98 @@ export function setupBreathingGuide() {
     infoButton?.setAttribute('aria-label', 'Come funziona la respirazione');
   }
 
+  function showCompletionScreen() {
+    if (!completionScreen) return;
+    if (calmScreen) calmScreen.inert = true;
+    completionScreen.inert = false;
+    completionScreen.setAttribute('aria-hidden', 'false');
+    completionScreen.classList.add('is-visible');
+    completionYesButton?.focus({ preventScroll: true });
+  }
+
+  function hideCompletionScreen(afterClose = () => {}) {
+    if (!completionScreen) {
+      afterClose();
+      return;
+    }
+
+    let finished = false;
+    let fallbackTimer;
+    const finish = event => {
+      if (event && (event.target !== completionScreen || event.propertyName !== 'opacity')) return;
+      if (finished) return;
+      finished = true;
+      clearTimeout(fallbackTimer);
+      completionScreen.removeEventListener('transitionend', finish);
+      completionScreen.setAttribute('aria-hidden', 'true');
+      if (calmScreen) calmScreen.inert = false;
+      afterClose();
+    };
+
+    completionScreen.addEventListener('transitionend', finish);
+    completionScreen.inert = true;
+    completionScreen.classList.remove('is-visible');
+    fallbackTimer = window.setTimeout(() => finish(), 700);
+  }
+
   function askToStopBreathing() {
     if (!isRunning || isPausedForConfirmation || !confirmDialog) return;
 
+    pendingHomeNavigation = true;
     pauseBreathingTimer();
     pauseExerciseAnimations();
     isPausedForConfirmation = true;
     confirmDialog.showModal();
   }
 
-  function resumeAfterConfirmation() {
-    if (!isPausedForConfirmation) return;
+  function closeConfirmation(afterClose = () => {}) {
+    if (!confirmDialog?.open) {
+      afterClose();
+      return;
+    }
 
-    if (confirmDialog?.open) confirmDialog.close();
+    if (isClosingConfirmation) return;
+    if (prefersReducedMotion) {
+      confirmDialog.close();
+      afterClose();
+      return;
+    }
+
+    isClosingConfirmation = true;
+    let fallbackTimer;
+    const finishClose = event => {
+      if (event && (event.target !== confirmDialog || event.animationName !== 'calm-confirm-exit')) return;
+      clearTimeout(fallbackTimer);
+      confirmDialog.removeEventListener('animationend', finishClose);
+      confirmDialog.close();
+      confirmDialog.classList.remove('is-closing');
+      isClosingConfirmation = false;
+      afterClose();
+    };
+
+    confirmDialog.addEventListener('animationend', finishClose);
+    confirmDialog.classList.add('is-closing');
+    fallbackTimer = window.setTimeout(() => finishClose(), 320);
+  }
+
+  function resumeAfterConfirmation() {
     pendingHomeNavigation = false;
-    isPausedForConfirmation = false;
-    resumeExerciseAnimations();
-    resumeBreathingTimer();
+    const wasPaused = isPausedForConfirmation;
+    closeConfirmation(() => {
+      if (!wasPaused) return;
+      isPausedForConfirmation = false;
+      resumeExerciseAnimations();
+      resumeBreathingTimer();
+    });
   }
 
   function confirmStopBreathing() {
     const shouldGoHome = pendingHomeNavigation;
-    if (confirmDialog?.open) confirmDialog.close();
     pendingHomeNavigation = false;
-    stopBreathing();
-    if (shouldGoHome) navigateHomeWithFade();
+    closeConfirmation(() => {
+      stopBreathing();
+      if (shouldGoHome) navigateHomeWithFade();
+    });
   }
 
   startButton.addEventListener('click', () => {
@@ -294,6 +363,16 @@ export function setupBreathingGuide() {
   });
   confirmDialog?.addEventListener('click', event => {
     if (event.target === confirmDialog) resumeAfterConfirmation();
+  });
+
+  completionYesButton?.addEventListener('click', () => {
+    hideCompletionScreen();
+    navigateHomeWithFade();
+  });
+  completionContinueButton?.addEventListener('click', () => {
+    hideCompletionScreen(() => {
+      window.location.assign(new URL('../../../pages/radicamento.html', import.meta.url).href);
+    });
   });
 
   if (infoButton && infoDialog) {

@@ -86,14 +86,36 @@
             <p>Inspira per 4 secondi, trattieni per 2 ed espira per 6. Puoi fermarti quando vuoi.</p>
         </dialog>
         <dialog class="calm-confirm" id="confirm-stop-dialog" aria-labelledby="confirm-stop-title" aria-describedby="confirm-stop-description">
-            <h2 id="confirm-stop-title">Sicura di volerti fermare?</h2>
-            <p id="confirm-stop-description">La respirazione è in pausa. Puoi riprenderla dallo stesso punto.</p>
+            <h2 id="confirm-stop-title">Sicura di voler tornare?</h2>
+            <p id="confirm-stop-description">Hai interrotto l'esercizio. Scegli No per riprendere oppure Sì per tornare alla Home.</p>
             <div class="calm-confirm__actions">
-                <button class="calm-confirm__button calm-confirm__button--yes" id="confirm-stop-yes" type="button">Sì</button>
+                <button class="calm-confirm__button" id="confirm-stop-yes" type="button">Sì</button>
                 <button class="calm-confirm__button calm-confirm__button--no" id="confirm-stop-no" type="button">No</button>
             </div>
         </dialog>
+        <!-- TASTI PROVVISORI: rimuovere questo blocco prima della versione finale. -->
+        <div class="temporary-tools" aria-label="Comandi temporanei">
+            <a class="temporary-tools__skip" href="radicamento.html" aria-label="Salta direttamente all'esercizio di radicamento">
+                Salta <i class="bi bi-skip-forward-fill" aria-hidden="true"></i>
+            </a>
+        </div>
+        <!-- FINE TASTI PROVVISORI -->
     </main>
+
+    <section class="calm-completion" id="breath-completion" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="completion-title" inert>
+        <div class="calm-completion__intro">
+            <img class="calm-completion__heart" src="../assets/images/illustrations/heart.png" alt="">
+            <h1 id="completion-title">Esercizio<br>completato!</h1>
+            <p class="calm-completion__praise">Sei stata bravissima!</p>
+            <div class="calm-completion__divider" aria-hidden="true"></div>
+        </div>
+
+        <div class="calm-completion__choice">
+            <p class="calm-completion__question">Ti senti meglio?</p>
+            <button class="calm-completion__button calm-completion__button--yes" id="completion-yes" type="button">Sì, grazie</button>
+            <button class="calm-completion__button calm-completion__button--continue" id="completion-continue" type="button">No, continua</button>
+        </div>
+    </section>
 
     <div class="waves" aria-hidden="true">
         <img src="../assets/images/waves/wave1.png" class="wave1" alt="">

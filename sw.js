@@ -1,24 +1,29 @@
 // Incrementa questa versione quando cambi i file memorizzati offline.
-const CACHE_NAME = 'app-v50';
+const CACHE_NAME = 'app-v60';
 const appFile = path => new URL(path, self.registration.scope).href;
 const ASSETS = [
   './',
   'index.html',
   'pages/calma.html',
+  'pages/radicamento.html',
   'assets/css/style.css',
   'assets/css/calma.css',
+  'assets/css/radicamento.css',
   'assets/js/app.js',
   'assets/js/calma.js',
+  'assets/js/radicamento.js',
   'assets/js/modules/pwa.js',
   'assets/js/modules/support.js',
   'assets/js/modules/navigation.js',
   'assets/js/modules/calma.js',
+  'assets/js/modules/radicamento.js',
   'manifest.json',
   'assets/images/waves/wave1.png',
   'assets/images/waves/wave2.png',
   'assets/images/waves/wave3.png',
   'assets/images/illustrations/line.png',
   'assets/images/illustrations/heart.png',
+  'assets/images/backgrounds/fineradicamento.png',
   'assets/icons/icona.png',
   'assets/icons/icona-512.png'
 ].map(appFile);

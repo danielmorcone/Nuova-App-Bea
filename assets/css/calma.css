@@ -422,11 +422,11 @@
 }
 
 .calm-guide__step[data-state="complete"] .calm-guide__icon {
-    background: #b7dfc1;
+    background: #a7dfab;
 }
 
 .calm-guide__step[data-state="complete"]:not(:last-child)::after {
-    background: #b7dfc1;
+    background: #a7dfab;
 }
 
 .calm-guide__step[data-state="complete"] .calm-guide__icon i {
@@ -588,13 +588,23 @@
 }
 
 .calm-confirm[open] {
-    animation: calm-confirm-enter 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: calm-confirm-enter 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.calm-confirm.is-closing {
+    pointer-events: none;
+    animation: calm-confirm-exit 260ms ease-in both;
 }
 
 .calm-confirm::backdrop {
     background: rgba(62, 43, 60, 0.28);
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
+    animation: calm-confirm-backdrop-enter 320ms ease-out both;
+}
+
+.calm-confirm.is-closing::backdrop {
+    animation: calm-confirm-backdrop-exit 260ms ease-in both;
 }
 
 .calm-confirm h2 {
@@ -628,7 +638,7 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-.calm-confirm__button--yes {
+.calm-confirm__button--no {
     border-color: transparent;
     background: linear-gradient(#ff83c2, #d72d8a);
     box-shadow: 0 5px 12px rgba(211, 43, 130, 0.2);
@@ -640,8 +650,220 @@
 }
 
 @keyframes calm-confirm-enter {
-    from { opacity: 0; transform: translateY(8px) scale(0.97); }
+    from { opacity: 0; transform: translateY(12px) scale(0.94); }
     to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes calm-confirm-backdrop-enter {
+    from { background-color: rgba(62, 43, 60, 0); }
+    to { background-color: rgba(62, 43, 60, 0.28); }
+}
+
+@keyframes calm-confirm-exit {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(8px) scale(0.97); }
+}
+
+@keyframes calm-confirm-backdrop-exit {
+    from { background-color: rgba(62, 43, 60, 0.28); }
+    to { background-color: rgba(62, 43, 60, 0); }
+}
+
+.calm-completion {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: calc(env(safe-area-inset-top) + 2rem) 1.5rem calc(env(safe-area-inset-bottom) + 2.5rem);
+    background-color: #fff;
+    background-image: url("../images/backgrounds/fineradicamento.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 550ms ease, visibility 0s linear 550ms;
+}
+
+.calm-completion.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
+}
+
+.calm-completion__intro {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.calm-completion__heart,
+.calm-completion__intro h1,
+.calm-completion__praise,
+.calm-completion__divider,
+.calm-completion__question,
+.calm-completion__button {
+    opacity: 0;
+}
+
+.calm-completion.is-visible .calm-completion__heart,
+.calm-completion.is-visible .calm-completion__intro h1,
+.calm-completion.is-visible .calm-completion__praise,
+.calm-completion.is-visible .calm-completion__divider,
+.calm-completion.is-visible .calm-completion__question,
+.calm-completion.is-visible .calm-completion__button {
+    animation: completion-element-enter 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.calm-completion.is-visible .calm-completion__intro h1 { animation-delay: 120ms; }
+.calm-completion.is-visible .calm-completion__praise { animation-delay: 260ms; }
+.calm-completion.is-visible .calm-completion__divider { animation-delay: 380ms; }
+.calm-completion.is-visible .calm-completion__question { animation-delay: 500ms; }
+.calm-completion.is-visible .calm-completion__button--yes { animation-delay: 650ms; }
+.calm-completion.is-visible .calm-completion__button--continue { animation-delay: 800ms; }
+
+@keyframes completion-element-enter {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.calm-completion__heart {
+    width: 6rem;
+    height: 6rem;
+    object-fit: contain;
+    animation: heartMove 4s ease-in-out infinite;
+}
+
+@keyframes heartMove {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.calm-completion__intro h1 {
+    margin-top: 4rem;
+    color: var(--color-ink);
+    font-size: clamp(2.75rem, 10vw, 3.25rem);
+    font-weight: 600;
+    line-height: 1.08;
+}
+
+.calm-completion__praise {
+    margin-top: 1.8rem;
+    color: #e33b91;
+    font-size: 1.35rem;
+    line-height: 1.4;
+}
+
+.calm-completion__divider {
+    width: 40%;
+    height: 1px;
+    margin-top: 2.6rem;
+    background: rgba(92, 72, 91, 0.16);
+}
+
+.calm-completion__choice {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.calm-completion__question {
+    margin-bottom: 1.7rem;
+    color: var(--color-ink);
+    font-size: 1.45rem;
+    text-align: center;
+}
+
+.calm-completion__button {
+    display: flex;
+    min-height: 3.9rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    font: inherit;
+    font-size: 1.05rem;
+    font-weight: 500;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 180ms ease, filter 180ms ease;
+}
+
+.calm-completion__button--yes {
+    width: min(68vw, 17rem);
+    background: linear-gradient(#fff, #f6e8f0b2);
+    box-shadow: 0 5px 14px rgba(100, 66, 91, 0.12);
+    color: #625874;
+}
+
+.calm-completion__button--continue {
+    width: min(68vw, 17rem);
+    min-height: 4.4rem;
+    margin-top: 1.8rem;
+    background: linear-gradient(#ff83c2, #d72d8a);
+    box-shadow: 0 8px 17px rgba(211, 43, 130, 0.26);
+    color: var(--color-white);
+    font-weight: 500;
+}
+
+.calm-completion__button:active {
+    transform: scale(0.97);
+    filter: brightness(1.03);
+}
+
+/* TASTI PROVVISORI: stili isolati, da rimuovere insieme al blocco HTML. */
+.temporary-tools {
+    position: fixed;
+    right: 0.75rem;
+    bottom: max(0.6rem, calc(env(safe-area-inset-bottom) + 0.1rem));
+    z-index: 20;
+}
+
+.temporary-tools__skip {
+    display: inline-flex;
+    min-width: 3.6rem;
+    min-height: 2.25rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: 0 4px 12px rgba(80, 44, 73, 0.12);
+    color: var(--color-accent);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-decoration: none;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 180ms ease, background-color 180ms ease;
+}
+
+.temporary-tools__skip:active {
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.9);
 }
 
 .waves {
@@ -748,6 +970,36 @@
 
     .calm-confirm[open] {
         animation: none;
+    }
+
+    .calm-confirm.is-closing {
+        animation: none;
+    }
+
+    .calm-confirm::backdrop,
+    .calm-confirm.is-closing::backdrop {
+        animation: none;
+    }
+
+    .calm-completion,
+    .calm-completion__heart,
+    .calm-completion__intro h1,
+    .calm-completion__praise,
+    .calm-completion__divider,
+    .calm-completion__question,
+    .calm-completion__button {
+        transition-duration: 0.01ms;
+    }
+
+    .calm-completion.is-visible .calm-completion__heart,
+    .calm-completion.is-visible .calm-completion__intro h1,
+    .calm-completion.is-visible .calm-completion__praise,
+    .calm-completion.is-visible .calm-completion__divider,
+    .calm-completion.is-visible .calm-completion__question,
+    .calm-completion.is-visible .calm-completion__button {
+        animation: none;
+        opacity: 1;
+        transform: none;
     }
 
     .calm-guide__step[data-state="active"] .calm-guide__icon,
