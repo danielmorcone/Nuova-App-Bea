@@ -1,3 +1,5 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.2/font/bootstrap-icons.min.css");
+
 .bubble-page {
     --bubble-halo-color: rgba(199, 157, 222, 0.48);
     --bubble-particle-color: rgba(199, 157, 222, 0.96);
@@ -237,7 +239,7 @@
     z-index: 3;
     min-width: 8.5rem;
     min-height: 2.8rem;
-    padding: 0.4rem 1rem;
+    padding: 0.4rem 2rem;
     border: 2px solid rgba(255, 255, 255, 0.85);
     border-radius: 2.4rem;
     background-image: linear-gradient(to top, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.76));

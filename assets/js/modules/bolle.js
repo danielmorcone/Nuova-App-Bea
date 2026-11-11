@@ -36,6 +36,7 @@ export function setupBubbleGame() {
   const sealVideoScreen = document.querySelector('#seal-video');
   const sealVideo = document.querySelector('#seal-video-player');
   const sealVideoHomeButton = document.querySelector('#seal-video-home');
+  const themeColorMeta = document.querySelector('meta[name="theme-color"]');
 
   if (!screen || !stage || !exitButton || !confirmDialog || !completionScreen) return;
 
@@ -523,6 +524,9 @@ export function setupBubbleGame() {
     sealVideoScreen.inert = false;
     sealVideoScreen.setAttribute('aria-hidden', 'false');
     sealVideoScreen.classList.add('is-active');
+    document.documentElement.classList.add('is-seal-video-active');
+    document.body.classList.add('is-seal-video-active');
+    themeColorMeta?.setAttribute('content', '#000000');
     sealVideoHomeButton.hidden = true;
     lastSealVideoTime = 0;
     hasSealVideoLooped = false;

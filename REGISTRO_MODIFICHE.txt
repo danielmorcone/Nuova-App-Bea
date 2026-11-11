@@ -9,7 +9,7 @@ STRUTTURA E STRUMENTI
 - Il progetto è organizzato in pagine HTML, fogli CSS, script JavaScript e moduli riutilizzabili sotto assets/ e pages/.
 - I percorsi delle pagine negli esercizi sono stati allineati al server che serve il progetto dalla cartella principale; i meta viewport supportano safe area e schermo iPhone.
 - I valori principali di colore, raggi e animazioni sono raccolti nelle variabili CSS condivise.
-- La PWA usa manifest.json e sw.js; la cache è stata aggiornata insieme alle nuove pagine e risorse (versione attuale: app-v85).
+- La PWA usa manifest.json e sw.js; la cache è stata aggiornata insieme alle nuove pagine e risorse (versione attuale: app-v90).
 - Sono disponibili Avvia-App-Bea.bat e Ferma-App-Bea.bat per avviare e fermare il server locale. Il server sceglie una porta libera se la 8000 è occupata e mostra l'indirizzo utilizzabile da telefono sulla stessa rete Wi-Fi.
 - Le impostazioni locali di VS Code sono state aggiornate per rendere più visibili i suggerimenti durante la scrittura del codice.
 
@@ -57,6 +57,9 @@ GIOCO DELLE BOLLE
 - L'avvio del video ora avviene prima di chiudere il popup, così il tocco su “Sì” resta associato alla richiesta di riproduzione con audio; gli eventi di riproduzione sono registrati prima della chiamata a play().
 - Il video usa la ripetizione nativa del browser; il pulsante Home appare quando il tempo torna all'inizio dopo il primo giro. L'audio viene instradato con Web Audio e la sessione media di sistema viene svuotata per ridurre la comparsa di Now Playing/Dynamic Island.
 - La traccia del video resta attiva quando viene collegata a Web Audio; il tentativo precedente di silenziare l'elemento video impediva l'uscita audio su Safari. Dove supportato, Audio Session viene impostata su playback per usare il canale adatto ai contenuti video.
+- La status bar di Bolle è tornata allo stile bianco predefinito; il layer video mantiene lo sfondo nero durante la riproduzione.
+- Il pulsante “Torna alla home” del video usa ora il gradiente rosa/fucsia, il bordo chiaro e le dimensioni del pulsante principale della schermata finale.
+- Il cuore decorativo del pulsante Home è un SVG inline, così non dipende da Bootstrap Icons o da librerie esterne.
 
 RISORSE AUDIO DA AGGIUNGERE PER LE BOLLE
 - assets/sounds/bubble-pop-small.mp3

@@ -205,6 +205,12 @@
 }
 
 /* Finale video: il nero accompagna la dissolvenza prima che appaiano le foche. */
+html.is-seal-video-active,
+html.is-seal-video-active body {
+    background: #000 !important;
+    color-scheme: dark;
+}
+
 .seal-video {
     position: fixed;
     z-index: 1000;
@@ -243,21 +249,35 @@
     right: max(1.25rem, env(safe-area-inset-right));
     bottom: max(1.5rem, env(safe-area-inset-bottom));
     left: max(1.25rem, env(safe-area-inset-left));
-    width: min(calc(100% - 2.5rem), 19rem);
-    min-height: 3.6rem;
+    width: min(68vw, 17rem);
+    min-height: 4.4rem;
     justify-self: center;
-    border: 1px solid rgba(255, 255, 255, 0.82);
+    border: 2px solid rgba(255, 255, 255, 0.95);
     border-radius: var(--radius-pill);
-    background: rgba(255, 255, 255, 0.94);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
-    color: var(--color-ink);
+    background: linear-gradient(#ff83c2, #d72d8a);
+    box-shadow: 0 8px 17px rgba(211, 43, 130, 0.26);
+    color: var(--color-white);
     font: inherit;
     font-size: 1rem;
+    font-weight: 500;
     opacity: 0;
     pointer-events: none;
     transform: translateY(8px);
     transition: opacity 500ms ease, transform 500ms ease;
     -webkit-tap-highlight-color: transparent;
+}
+
+.seal-video__home:active {
+    filter: brightness(1.03);
+}
+
+.seal-video__home-heart {
+    display: inline-block;
+    width: 1.08em;
+    height: 1.08em;
+    margin-left: 0.45rem;
+    fill: currentColor;
+    vertical-align: -0.15em;
 }
 
 .seal-video.is-home-ready .seal-video__home {
