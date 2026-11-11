@@ -1,0 +1,275 @@
+.calm-completion {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: calc(env(safe-area-inset-top) + 2rem) 1.5rem calc(env(safe-area-inset-bottom) + 2.5rem);
+    background-color: #fff;
+    background-image: url("../images/backgrounds/fineradicamento.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 550ms ease, visibility 0s linear 550ms;
+}
+
+.calm-completion.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
+}
+
+.calm-completion.is-closing {
+    transition: opacity 700ms ease, visibility 0s linear 700ms;
+}
+
+.calm-completion__intro {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    margin-top: 1rem;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.calm-completion__heart,
+.calm-completion__intro h1,
+.calm-completion__praise,
+.calm-completion__divider,
+.calm-completion__question,
+.calm-completion__button {
+    opacity: 0;
+}
+
+.calm-completion.is-visible .calm-completion__heart,
+.calm-completion.is-visible .calm-completion__intro h1,
+.calm-completion.is-visible .calm-completion__praise,
+.calm-completion.is-visible .calm-completion__divider,
+.calm-completion.is-visible .calm-completion__question,
+.calm-completion.is-visible .calm-completion__button {
+    animation: completion-element-enter 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.calm-completion.is-visible .calm-completion__heart {
+    animation:
+        completion-element-enter 800ms cubic-bezier(0.22, 1, 0.36, 1) both,
+        heartMove 4s ease-in-out 800ms infinite;
+}
+
+.calm-completion.is-visible .calm-completion__intro h1 { animation-delay: 120ms; }
+.calm-completion.is-visible .calm-completion__praise { animation-delay: 260ms; }
+.calm-completion.is-visible .calm-completion__divider { animation-delay: 380ms; }
+.calm-completion.is-visible .calm-completion__question { animation-delay: 500ms; }
+.calm-completion.is-visible .calm-completion__button--yes { animation-delay: 650ms; }
+.calm-completion.is-visible .calm-completion__button--continue { animation-delay: 800ms; }
+
+@keyframes completion-element-enter {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.calm-completion__heart {
+    width: 6rem;
+    height: 6rem;
+    object-fit: contain;
+    animation: heartMove 4s ease-in-out infinite;
+}
+
+@keyframes heartMove {
+    0% { scale: 1; }
+    50% { scale: 1.05; }
+    100% { scale: 1; }
+}
+
+.calm-completion__intro h1 {
+    margin-top: 2.5rem;
+    color: var(--color-ink);
+    font-size: clamp(2.75rem, 10vw, 3.25rem);
+    font-weight: 600;
+    line-height: 1.08;
+}
+
+.calm-completion__praise {
+    margin-top: 2.2rem;
+    color: #e33b91;
+    font-size: 1.35rem;
+    line-height: 1.4;
+}
+
+.calm-completion__divider {
+    width: 40%;
+    height: 1px;
+    margin-top: 2.6rem;
+    background: rgba(92, 72, 91, 0.16);
+}
+
+.calm-completion__choice {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 4rem;
+}
+
+.firma {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 85%;
+}
+
+.calm-completion__question {
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+    color: var(--color-ink);
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+
+.calm-completion__button {
+    display: flex;
+    min-height: 3.9rem;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    font: inherit;
+    font-size: 1.1rem;
+    font-weight: 500;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 180ms ease, filter 180ms ease;
+}
+
+.calm-completion__button--yes {
+    width: min(68vw, 17rem);
+    border: 2px solid #f3c9df;
+    background: linear-gradient(#fff, #fff5fbd0);
+    box-shadow: 0 5px 14px rgba(100, 66, 91, 0.12);
+    color: #625874;
+}
+
+.calm-completion__button--continue {
+    width: min(68vw, 17rem);
+    min-height: 4.4rem;
+    margin-top: 1.8rem;
+    margin-bottom: 1.7rem;
+    background: linear-gradient(#ff83c2, #d72d8a);
+    box-shadow: 0 8px 17px rgba(211, 43, 130, 0.26);
+    color: var(--color-white);
+    font-weight: 500;
+}
+
+.calm-completion__button:active {
+    transform: scale(0.97);
+    filter: brightness(1.03);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .calm-completion,
+    .calm-completion__heart,
+    .calm-completion__intro h1,
+    .calm-completion__praise,
+    .calm-completion__divider,
+    .calm-completion__question,
+    .calm-completion__button {
+        transition-duration: 0.01ms;
+    }
+
+    .calm-completion.is-closing {
+        transition-duration: 0.01ms;
+        transition-delay: 0s;
+    }
+
+    .calm-completion.is-visible .calm-completion__heart,
+    .calm-completion.is-visible .calm-completion__intro h1,
+    .calm-completion.is-visible .calm-completion__praise,
+    .calm-completion.is-visible .calm-completion__divider,
+    .calm-completion.is-visible .calm-completion__question,
+    .calm-completion.is-visible .calm-completion__button {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* Finale video: il nero accompagna la dissolvenza prima che appaiano le foche. */
+.seal-video {
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background: #000;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 1.4s ease, visibility 0s linear 1.4s;
+}
+
+.seal-video.is-active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
+}
+
+.seal-video__player {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 900ms ease;
+}
+
+.seal-video.is-video-visible .seal-video__player {
+    opacity: 1;
+}
+
+.seal-video__home {
+    position: absolute;
+    right: max(1.25rem, env(safe-area-inset-right));
+    bottom: max(1.5rem, env(safe-area-inset-bottom));
+    left: max(1.25rem, env(safe-area-inset-left));
+    width: min(calc(100% - 2.5rem), 19rem);
+    min-height: 3.6rem;
+    justify-self: center;
+    border: 1px solid rgba(255, 255, 255, 0.82);
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+    color: var(--color-ink);
+    font: inherit;
+    font-size: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: opacity 500ms ease, transform 500ms ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.seal-video.is-home-ready .seal-video__home {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .seal-video,
+    .seal-video__player,
+    .seal-video__home {
+        transition-duration: 0.01ms;
+    }
+}

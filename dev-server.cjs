@@ -14,6 +14,7 @@ const contentTypes = {
   '.js': 'text/javascript; charset=utf-8',
   '.cjs': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
+  '.mp4': 'video/mp4',
   '.png': 'image/png',
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon'
@@ -73,7 +74,40 @@ const server = http.createServer((request, response) => {
       }
 
       const contentType = contentTypes[path.extname(filePath).toLowerCase()] || 'application/octet-stream';
-      response.writeHead(200, { 'Content-Type': contentType, 'Cache-Control': 'no-store' });
+      const rangeHeader = request.headers.range;
+      const rangeMatch = rangeHeader && /^bytes=(\d*)-(\d*)$/.exec(rangeHeader);
+
+      if (contentType === 'video/mp4' && rangeMatch) {
+        const hasStart = rangeMatch[1] !== '';
+        const hasEnd = rangeMatch[2] !== '';
+        const start = hasStart ? Number(rangeMatch[1]) : Math.max(0, fileStats.size - Number(rangeMatch[2]));
+        const end = hasEnd && hasStart
+          ? Math.min(Number(rangeMatch[2]), fileStats.size - 1)
+          : fileStats.size - 1;
+
+        if ((!hasStart && !hasEnd) || start >= fileStats.size || end < start) {
+          response.writeHead(416, { 'Content-Range': `bytes */${fileStats.size}` });
+          response.end();
+          return;
+        }
+
+        response.writeHead(206, {
+          'Content-Type': contentType,
+          'Content-Length': end - start + 1,
+          'Content-Range': `bytes ${start}-${end}/${fileStats.size}`,
+          'Accept-Ranges': 'bytes',
+          'Cache-Control': 'no-store'
+        });
+        fs.createReadStream(filePath, { start, end }).pipe(response);
+        return;
+      }
+
+      response.writeHead(200, {
+        'Content-Type': contentType,
+        'Content-Length': fileStats.size,
+        ...(contentType === 'video/mp4' ? { 'Accept-Ranges': 'bytes' } : {}),
+        'Cache-Control': 'no-store'
+      });
       fs.createReadStream(filePath).pipe(response);
     });
   });

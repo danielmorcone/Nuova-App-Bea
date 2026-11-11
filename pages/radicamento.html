@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/radicamento.css">
+    <link rel="stylesheet" href="../assets/css/completion.css">
 
     <title>Radicamento — respira.</title>
     <script type="module" src="../assets/js/radicamento.js"></script>
@@ -51,6 +52,21 @@
             <button class="grounding-confirm__button grounding-confirm__button--no" id="grounding-confirm-no" type="button">No</button>
         </div>
     </dialog>
+
+    <section class="calm-completion" id="grounding-completion" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="grounding-completion-title" inert>
+        <div class="calm-completion__intro">
+            <img class="calm-completion__heart" src="../assets/images/illustrations/heart.png" alt="">
+            <h1 id="grounding-completion-title">Esercizio<br>completato!</h1>
+            <p class="calm-completion__praise">Sei stata bravissima!</p>
+            <div class="calm-completion__divider" aria-hidden="true"></div>
+        </div>
+
+        <div class="calm-completion__choice">
+            <p class="calm-completion__question">Ti senti meglio?</p>
+            <button class="calm-completion__button calm-completion__button--yes" id="grounding-completion-yes" type="button">S&igrave;, grazie</button>
+            <button class="calm-completion__button calm-completion__button--continue" id="grounding-completion-continue" type="button">No, continua</button>
+        </div>
+    </section>
 
     <div class="waves" aria-hidden="true">
         <img src="../assets/images/waves/wave1.png" class="wave1" alt="">

@@ -1,12 +1,18 @@
+// AUDIO TEMPORANEAMENTE DISATTIVATO.
+// Per riattivare musica ed effetti, imposta il valore su false.
+const AUDIO_TEMPORANEAMENTE_DISATTIVATO = true;
+
 const MUSIC_URL = new URL('../../sounds/bgmusic.mp3', import.meta.url);
 const PLAYBACK_KEY = 'respira-music-enabled';
 const POSITION_KEY = 'respira-music-position';
 const FADE_SECONDS = 0.8;
 const TARGET_VOLUME = 0.2;
 
-const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+const AudioContextClass = AUDIO_TEMPORANEAMENTE_DISATTIVATO
+  ? null
+  : window.AudioContext || window.webkitAudioContext;
 const context = AudioContextClass ? new AudioContextClass() : null;
-const fallbackAudio = context ? null : new Audio(MUSIC_URL.href);
+const fallbackAudio = AUDIO_TEMPORANEAMENTE_DISATTIVATO || context ? null : new Audio(MUSIC_URL.href);
 if (fallbackAudio) fallbackAudio.volume = TARGET_VOLUME;
 
 let audioBufferPromise = null;
@@ -21,11 +27,13 @@ let isFadingOut = false;
 let fallbackFadeTimer = null;
 let plannedMusicFade = null;
 
-const button = document.createElement('button');
-button.className = 'music-toggle';
-button.type = 'button';
-button.innerHTML = '<span aria-hidden="true">&#9835;</span>';
-document.body.append(button);
+const button = AUDIO_TEMPORANEAMENTE_DISATTIVATO ? null : document.createElement('button');
+if (button) {
+  button.className = 'music-toggle';
+  button.type = 'button';
+  button.innerHTML = '<span aria-hidden="true">&#9835;</span>';
+  document.body.append(button);
+}
 
 function readStorage(key) {
   try {
@@ -59,6 +67,7 @@ function isPlaying() {
 }
 
 function updateButton() {
+  if (AUDIO_TEMPORANEAMENTE_DISATTIVATO || !button) return;
   const playing = isPlaying();
   button.classList.toggle('is-muted', !playing);
   button.setAttribute('aria-pressed', String(playing));
@@ -142,6 +151,7 @@ function finishPlannedMusicFade(fade) {
 }
 
 export function fadeOutMusic(durationSeconds = 8.7) {
+  if (AUDIO_TEMPORANEAMENTE_DISATTIVATO) return () => {};
   if (!enabled) return () => {};
 
   const fade = {
@@ -182,6 +192,7 @@ export function fadeOutMusic(durationSeconds = 8.7) {
 }
 
 export function playEffect(name, { loop = false, fadeOutSeconds = 0.28, volume = 0.55 } = {}) {
+  if (AUDIO_TEMPORANEAMENTE_DISATTIVATO) return { stop() {} };
   activeEffects.get(name)?.stop();
   const url = new URL(`../../sounds/${name}.mp3`, import.meta.url);
   let effectSource = null;
@@ -282,12 +293,13 @@ export function playEffect(name, { loop = false, fadeOutSeconds = 0.28, volume =
 }
 
 // Carica in anticipo i due effetti brevi, così partono senza ritardo durante l'uso.
-if (context) {
+if (!AUDIO_TEMPORANEAMENTE_DISATTIVATO && context) {
   loadEffectBuffer('swipe').catch(() => {});
   loadEffectBuffer('longpress').catch(() => {});
 }
 
 async function startMusic() {
+  if (AUDIO_TEMPORANEAMENTE_DISATTIVATO) return;
   if (fallbackAudio) {
     window.clearInterval(fallbackFadeTimer);
     fallbackFadeTimer = null;
@@ -350,6 +362,7 @@ async function startMusic() {
 }
 
 function stopMusic() {
+  if (AUDIO_TEMPORANEAMENTE_DISATTIVATO) return;
   if (plannedMusicFade) {
     window.clearTimeout(plannedMusicFade.timer);
     window.clearInterval(plannedMusicFade.volumeTimer);
@@ -393,25 +406,29 @@ function stopMusic() {
   updateButton();
 }
 
-button.addEventListener('click', () => {
-  enabled = !enabled;
-  writeStorage(PLAYBACK_KEY, String(enabled));
+if (button) {
+  button.addEventListener('click', () => {
+    enabled = !enabled;
+    writeStorage(PLAYBACK_KEY, String(enabled));
+
+    if (enabled) startMusic();
+    else stopMusic();
+  });
+}
+
+if (!AUDIO_TEMPORANEAMENTE_DISATTIVATO) {
+  // Il primo tocco avvia la traccia se iOS ha bloccato l'avvio automatico.
+  document.addEventListener('pointerdown', event => {
+    if (enabled && !isPlaying() && !event.target.closest('.music-toggle')) startMusic();
+  }, { capture: true });
+
+  document.addEventListener('keydown', event => {
+    if (enabled && !isPlaying() && event.key !== 'Tab') startMusic();
+  }, { capture: true });
 
   if (enabled) startMusic();
-  else stopMusic();
-});
 
-// Il primo tocco avvia la traccia se iOS ha bloccato l'avvio automatico.
-document.addEventListener('pointerdown', event => {
-  if (enabled && !isPlaying() && !event.target.closest('.music-toggle')) startMusic();
-}, { capture: true });
-
-document.addEventListener('keydown', event => {
-  if (enabled && !isPlaying() && event.key !== 'Tab') startMusic();
-}, { capture: true });
-
-if (enabled) startMusic();
-
-window.addEventListener('pagehide', () => {
-  writeStorage(POSITION_KEY, String(currentPosition()));
-});
+  window.addEventListener('pagehide', () => {
+    writeStorage(POSITION_KEY, String(currentPosition()));
+  });
+}

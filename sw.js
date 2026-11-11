@@ -1,23 +1,29 @@
 // Incrementa questa versione quando cambi i file memorizzati offline.
-const CACHE_NAME = 'app-v71';
+const CACHE_NAME = 'app-v85';
 const appFile = path => new URL(path, self.registration.scope).href;
 const ASSETS = [
   './',
   'index.html',
   'pages/calma.html',
   'pages/radicamento.html',
+  'pages/bolle.html',
   'assets/css/style.css',
   'assets/css/calma.css',
   'assets/css/radicamento.css',
+  'assets/css/completion.css',
+  'assets/css/completion_final.css',
+  'assets/css/bolle.css',
   'assets/js/app.js',
   'assets/js/calma.js',
   'assets/js/radicamento.js',
+  'assets/js/bolle.js',
   'assets/js/modules/pwa.js',
   'assets/js/modules/music.js',
   'assets/js/modules/support.js',
   'assets/js/modules/navigation.js',
   'assets/js/modules/calma.js',
   'assets/js/modules/radicamento.js',
+  'assets/js/modules/bolle.js',
   'manifest.json',
   'assets/images/waves/wave1.png',
   'assets/images/waves/wave2.png',
@@ -25,9 +31,12 @@ const ASSETS = [
   'assets/images/illustrations/line.png',
   'assets/images/illustrations/heart.png',
   'assets/images/backgrounds/fineradicamento.png',
-  'assets/sounds/bgmusic.mp3',
-  'assets/sounds/swipe.mp3',
-  'assets/sounds/longpress.mp3',
+  'assets/video-foche.mp4',
+  // Suoni esclusi temporaneamente dalla cache PWA insieme alla disattivazione audio.
+  // Ripristinare queste risorse quando AUDIO_TEMPORANEAMENTE_DISATTIVATO torna false.
+  // 'assets/sounds/bgmusic.mp3',
+  // 'assets/sounds/swipe.mp3',
+  // 'assets/sounds/longpress.mp3',
   'assets/icons/icona.png',
   'assets/icons/icona-512.png'
 ].map(appFile);

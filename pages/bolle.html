@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="respira.">
+
+    <link rel="apple-touch-icon" href="../assets/icons/icona.png">
+    <link rel="manifest" href="../manifest.json">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/completion_final.css">
+    <link rel="stylesheet" href="../assets/css/bolle.css">
+
+    <title>Gioco delle bolle — respira.</title>
+    <script type="module" src="../assets/js/bolle.js"></script>
+</head>
+
+<body class="bubble-page">
+    <main class="bubbles-screen" id="bubbles-screen">
+        <header class="bubble-header" id="bubble-header">
+            <h1>Gioco finale</h1>
+            <p class="bubble-description">Tocca le bolle per farle scoppiare, rilassati</p>
+        </header>
+
+        <section class="bubble-play-area" id="bubble-play-area" aria-label="Tocca le bolle per farle scoppiare"></section>
+
+        <button class="bubble-exit" id="bubble-exit" type="button" aria-haspopup="dialog" aria-controls="bubble-confirm">
+            Smetti di giocare
+        </button>
+    </main>
+
+    <dialog class="bubble-confirm" id="bubble-confirm" aria-labelledby="bubble-confirm-title" aria-describedby="bubble-confirm-description">
+        <h2 id="bubble-confirm-title">Vuoi smettere di giocare?</h2>
+        <p id="bubble-confirm-description">Puoi sempre scoppiare qualche altra bollicina se vuoi</p>
+        <div class="bubble-confirm__actions">
+            <button class="bubble-confirm__button" id="bubble-confirm-continue" type="button">Continua</button>
+            <button class="bubble-confirm__button bubble-confirm__button--exit" id="bubble-confirm-exit" type="button">Sì, esci</button>
+        </div>
+    </dialog>
+
+    <section class="calm-completion" id="bubble-completion" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="bubble-completion-title" inert>
+        <div class="calm-completion__intro">
+            <img class="calm-completion__heart" src="../assets/images/illustrations/heart.png" alt="">
+            <h1 id="bubble-completion-title">Percorso finito!</h1>
+            <p class="calm-completion__question">Spero di essere riuscito ad aiutarti anche solo un pochino. Tutti questi esercizi sono stati creati da me per provare ad aiutarti, ma chiaramente non sono un professionista. Se hai bisogno di aiuto, non aspettare a chiamarmi.</p>
+                <div class="firma">
+                    <p class="calm-completion__question">Ti amo.</p>
+                    <p class="calm-completion__question">- Il tuo Kai</p>
+                </div>
+        </div>
+
+        <div class="calm-completion__choice">
+            <button class="calm-completion__button calm-completion__button--continue" id="bubble-completion-continue" type="button">Torna alla home</button>
+            <button class="calm-completion__button calm-completion__button--yes" id="bubble-completion-yes" type="button" aria-haspopup="dialog" aria-controls="bubble-next-exercise-confirm">Non sto ancora bene...</button>
+        </div>
+    </section>
+
+    <dialog class="bubble-confirm" id="bubble-next-exercise-confirm" aria-labelledby="bubble-next-exercise-title" aria-describedby="bubble-next-exercise-description">
+        <h2 id="bubble-next-exercise-title">Forse c'é un ultima possibilitá...</h2>
+        <p id="bubble-next-exercise-description">Possiamo procedere solo se ti senti pronta e sei estremamente sicura. Con queste cose non si scherza.</p>
+        <div class="bubble-confirm__actions">
+            <button class="bubble-confirm__button" id="bubble-next-exercise-no" type="button">No</button>
+            <button class="bubble-confirm__button bubble-confirm__button--exit" id="bubble-next-exercise-yes" type="button">Sì</button>
+        </div>
+    </dialog>
+
+    <section class="seal-video" id="seal-video" aria-label="Video delle foche" aria-hidden="true" inert>
+        <video class="seal-video__player" id="seal-video-player" playsinline webkit-playsinline preload="auto" disableRemotePlayback x-webkit-airplay="deny" controlslist="noremoteplayback" aria-label="Video delle foche">
+            <source src="../assets/video-foche.mp4" type="video/mp4">
+        </video>
+        <button class="seal-video__home" id="seal-video-home" type="button" aria-label="Torna alla home">
+            Torna alla home
+        </button>
+    </section>
+
+</body>
+
+</html>

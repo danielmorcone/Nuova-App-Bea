@@ -29,6 +29,9 @@ export function setupGroundingExercise() {
   const confirmDialog = document.querySelector('#grounding-confirm');
   const confirmYesButton = document.querySelector('#grounding-confirm-yes');
   const confirmNoButton = document.querySelector('#grounding-confirm-no');
+  const completionScreen = document.querySelector('#grounding-completion');
+  const completionYesButton = document.querySelector('#grounding-completion-yes');
+  const completionContinueButton = document.querySelector('#grounding-completion-continue');
 
   if (!screen || !form || !stepNumber || !stepTitle || !stepDescription || !answer || !answerLabel || !previousButton) return;
 
@@ -73,22 +76,47 @@ export function setupGroundingExercise() {
     fallbackTimer = window.setTimeout(() => finishFade(), 350);
   }
 
-  function leaveExercise() {
+  function leaveExercise(destination = '../index.html') {
     if (isLeaving) return;
     isLeaving = true;
 
     let fallbackTimer;
-    const goHome = () => window.location.assign('../index.html');
+    const goToDestination = () => window.location.assign(destination);
     const finishExit = event => {
       if (event && (event.target !== screen || event.propertyName !== 'opacity')) return;
       clearTimeout(fallbackTimer);
       screen.removeEventListener('transitionend', finishExit);
-      goHome();
+      goToDestination();
     };
 
     screen.addEventListener('transitionend', finishExit);
     document.body.classList.add('is-leaving');
-    fallbackTimer = window.setTimeout(() => finishExit(), 800);
+    fallbackTimer = window.setTimeout(goToDestination, 800);
+  }
+
+  function showCompletionScreen() {
+    if (!completionScreen) {
+      leaveExercise();
+      return;
+    }
+
+    screen.inert = true;
+    completionScreen.inert = false;
+    completionScreen.setAttribute('aria-hidden', 'false');
+    completionScreen.classList.remove('is-closing');
+    completionScreen.classList.add('is-visible');
+    completionYesButton?.focus({ preventScroll: true });
+  }
+
+  function finishWithDestination(destination) {
+    if (isLeaving) return;
+    completionScreen?.setAttribute('aria-hidden', 'true');
+    if (completionScreen) {
+      completionScreen.inert = true;
+      completionScreen.classList.add('is-closing');
+      completionScreen.classList.remove('is-visible');
+    }
+    leaveExercise(destination);
   }
 
   function closeConfirmation(afterClose = () => {}) {
@@ -127,7 +155,7 @@ export function setupGroundingExercise() {
 
     answers[currentStep] = answer.value.trim();
     if (currentStep < steps.length - 1) changeStep(currentStep + 1);
-    else leaveExercise();
+    else showCompletionScreen();
   });
 
   previousButton?.addEventListener('click', () => {
@@ -146,6 +174,8 @@ export function setupGroundingExercise() {
     closeConfirmation(leaveExercise);
   });
   confirmNoButton?.addEventListener('click', () => closeConfirmation());
+  completionYesButton?.addEventListener('click', () => finishWithDestination('../index.html'));
+  completionContinueButton?.addEventListener('click', () => finishWithDestination('calma.html'));
   confirmDialog?.addEventListener('cancel', event => {
     event.preventDefault();
     closeConfirmation();
