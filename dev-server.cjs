@@ -21,6 +21,35 @@ const contentTypes = {
 };
 
 const server = http.createServer((request, response) => {
+  // Solo strumenti di sviluppo: nessuna dipendenza e nessuna modifica agli HTML su disco.
+  if (request.method === 'GET' && request.url === '/__app-bea-changes__') {
+    const files = {};
+    function scan(folder) {
+      for (const item of fs.readdirSync(folder, { withFileTypes: true })) {
+        const fullPath = path.join(folder, item.name);
+        if (item.isDirectory()) scan(fullPath);
+        else {
+          const stats = fs.statSync(fullPath);
+          files[path.relative(projectFolder, fullPath).replace(/\\/g, '/')] = `${stats.mtimeMs}-${stats.size}`;
+        }
+      }
+    }
+    try {
+      scan(path.join(projectFolder, 'assets'));
+      scan(path.join(projectFolder, 'pages'));
+      for (const file of ['index.html', 'manifest.json']) {
+        const stats = fs.statSync(path.join(projectFolder, file));
+        files[file] = `${stats.mtimeMs}-${stats.size}`;
+      }
+      response.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+      response.end(JSON.stringify(files));
+    } catch {
+      // Un salvataggio atomico dell'editor può rendere un file momentaneamente assente.
+      response.writeHead(503, { 'Cache-Control': 'no-store' });
+      response.end();
+    }
+    return;
+  }
   if (request.method === 'POST' && request.url === '/__stop-app-bea__') {
     const remoteAddress = request.socket.remoteAddress;
     const isLocalRequest = remoteAddress === '127.0.0.1' || remoteAddress === '::1' || remoteAddress === '::ffff:127.0.0.1';
@@ -74,6 +103,15 @@ const server = http.createServer((request, response) => {
       }
 
       const contentType = contentTypes[path.extname(filePath).toLowerCase()] || 'application/octet-stream';
+      if (contentType.startsWith('text/html')) {
+        fs.readFile(filePath, 'utf8', (readError, source) => {
+          if (readError) { response.writeHead(500); response.end(); return; }
+          const html = source.replace(/<\/body>/i, '<script src="/dev-client.js" defer></script></body>');
+          response.writeHead(200, { 'Content-Type': contentType, 'Content-Length': Buffer.byteLength(html), 'Cache-Control': 'no-store' });
+          response.end(html);
+        });
+        return;
+      }
       const rangeHeader = request.headers.range;
       const rangeMatch = rangeHeader && /^bytes=(\d*)-(\d*)$/.exec(rangeHeader);
 

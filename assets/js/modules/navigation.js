@@ -44,6 +44,7 @@ export function setupNavigation() {
       const isActive = name === selectedName;
       screen.classList.toggle('is-active', isActive);
       screen.setAttribute('aria-hidden', String(!isActive));
+      screen.inert = !isActive;
     });
 
     const center = selectedTab.offsetLeft + selectedTab.offsetWidth / 2;
@@ -75,22 +76,38 @@ export function setupNavigation() {
   });
 
   let touchStart = null;
+  let suppressClickUntil = 0;
   document.addEventListener('pointerdown', event => {
+    touchStart = null;
     if (!event.isPrimary || event.button !== 0) return;
-    if (event.target.closest('.nav, .music-toggle, button, a, input, dialog, .btncontainer')) return;
+    suppressClickUntil = 0;
+    if (event.target.closest('.nav, .music-toggle, a, input, textarea, select, dialog, .btncontainer')) return;
+    // I giorni e le frecce del calendario restano toccabili, ma consentono anche lo swipe.
+    if (event.target.closest('button') && !event.target.closest('.mood-calendar')) return;
     if (document.body.classList.contains('is-transitioning')) return;
 
-    touchStart = { x: event.clientX, y: event.clientY };
+    touchStart = { x: event.clientX, y: event.clientY, pointerId: event.pointerId };
+  }, { passive: true });
+
+  document.addEventListener('pointermove', event => {
+    if (!touchStart || event.pointerId !== touchStart.pointerId) return;
+    const deltaX = Math.abs(event.clientX - touchStart.x);
+    const deltaY = Math.abs(event.clientY - touchStart.y);
+    // Una volta iniziato lo scroll verticale, quel gesto non cambia più scheda.
+    if (deltaY > 12 && deltaY > deltaX) touchStart = null;
   }, { passive: true });
 
   document.addEventListener('pointerup', event => {
-    if (!touchStart) return;
+    if (!touchStart || event.pointerId !== touchStart.pointerId) return;
 
     const deltaX = event.clientX - touchStart.x;
     const deltaY = event.clientY - touchStart.y;
     touchStart = null;
 
     if (Math.abs(deltaX) < 55 || Math.abs(deltaX) < Math.abs(deltaY) * 1.3) return;
+
+    // Il rilascio dopo uno swipe non deve attivare anche il giorno o la freccia sottostante.
+    suppressClickUntil = performance.now() + 400;
 
     const currentIndex = tabs.findIndex(tab => tab.classList.contains('active'));
     const nextIndex = Math.max(0, Math.min(tabs.length - 1, currentIndex + (deltaX < 0 ? 1 : -1)));
@@ -99,6 +116,13 @@ export function setupNavigation() {
       playEffect('swipe', { fadeOutSeconds: 0.18, volume: 0.3 });
     }
   }, { passive: true });
+
+  document.addEventListener('click', event => {
+    if (event.detail === 0 || performance.now() >= suppressClickUntil) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    suppressClickUntil = 0;
+  }, { capture: true });
 
   document.addEventListener('pointercancel', () => { touchStart = null; }, { passive: true });
 

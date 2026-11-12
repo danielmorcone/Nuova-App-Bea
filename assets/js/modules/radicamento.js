@@ -175,7 +175,7 @@ export function setupGroundingExercise() {
   });
   confirmNoButton?.addEventListener('click', () => closeConfirmation());
   completionYesButton?.addEventListener('click', () => finishWithDestination('../index.html'));
-  completionContinueButton?.addEventListener('click', () => finishWithDestination('calma.html'));
+  completionContinueButton?.addEventListener('click', () => finishWithDestination('bolle.html'));
   confirmDialog?.addEventListener('cancel', event => {
     event.preventDefault();
     closeConfirmation();

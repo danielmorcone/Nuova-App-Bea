@@ -1,5 +1,5 @@
 // Incrementa questa versione quando cambi i file memorizzati offline.
-const CACHE_NAME = 'app-v90';
+const CACHE_NAME = 'app-v107';
 const appFile = path => new URL(path, self.registration.scope).href;
 const ASSETS = [
   './',
@@ -8,6 +8,8 @@ const ASSETS = [
   'pages/radicamento.html',
   'pages/bolle.html',
   'assets/css/style.css',
+  'assets/css/umore.css',
+  'assets/css/navbar-glass.css',
   'assets/css/calma.css',
   'assets/css/radicamento.css',
   'assets/css/completion.css',
@@ -21,6 +23,8 @@ const ASSETS = [
   'assets/js/modules/music.js',
   'assets/js/modules/support.js',
   'assets/js/modules/navigation.js',
+  'assets/js/modules/umore.js',
+  'assets/js/modules/mood-store.js',
   'assets/js/modules/calma.js',
   'assets/js/modules/radicamento.js',
   'assets/js/modules/bolle.js',
@@ -61,6 +65,28 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
+
+  // Codice e pagine aggiornati online, con la copia salvata disponibile offline.
+  const url = new URL(event.request.url);
+  url.search = '';
+  if (ASSETS.includes(url.href) && (/\.(css|js|html)$/.test(url.pathname) || url.href === appFile('./'))) {
+    event.respondWith((async () => {
+      try {
+        const response = await fetch(event.request, { cache: 'no-store' });
+        if (!response.ok) throw new Error('Risorsa non disponibile');
+        try {
+          const cache = await caches.open(CACHE_NAME);
+          await cache.put(url.href, response.clone());
+        } catch {
+          // Un errore di scrittura non deve impedire di usare il file ricevuto.
+        }
+        return response;
+      } catch {
+        return await caches.match(url.href) || Response.error();
+      }
+    })());
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then(response => response || fetch(event.request))

@@ -20,6 +20,8 @@
 
     <title>respira. — uno spazio per te</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/umore.css">
+    <link rel="stylesheet" href="assets/css/navbar-glass.css">
     <script type="module" src="assets/js/app.js"></script>
 </head>
 
@@ -47,7 +49,26 @@ sono qui per te. <span> Tranquilla</span>.</p>
     </div>
 
     <section class="empty-tab" id="noi-screen" aria-label="Noi" aria-hidden="true"></section>
-    <section class="empty-tab" id="umore-screen" aria-label="Umore" aria-hidden="true"></section>
+    <section class="empty-tab mood-screen" id="umore-screen" aria-labelledby="mood-title" aria-hidden="true" inert>
+        <div class="mood-content">
+            <header class="mood-header">
+                <h1 id="mood-title">Il tuo umore 💗</h1>
+                <p>Un calendario tutto per te,<br>racconta come ti senti.</p>
+            </header>
+            <section class="mood-calendar mood-card" aria-label="Calendario dell'umore">
+                <div class="mood-calendar__toolbar">
+                    <button id="mood-prev" class="mood-month-button" type="button" aria-label="Mese precedente">‹</button>
+                    <h2 id="mood-month" aria-live="polite"><i class="bi bi-calendar" aria-hidden="true"></i><span class="mood-month-label"></span></h2>
+                    <button id="mood-next" class="mood-month-button" type="button" aria-label="Mese successivo">›</button>
+                </div>
+                <div class="mood-weekdays" aria-hidden="true"><span>L</span><span>M</span><span>M</span><span>G</span><span>V</span><span>S</span><span>D</span></div>
+                <div id="mood-days" class="mood-days" role="group" aria-labelledby="mood-month"></div>
+            </section>
+            <p id="mood-storage-error" class="mood-storage-error" role="alert" hidden></p>
+            <section id="mood-panel" class="mood-panel mood-card" aria-label="La giornata selezionata"></section>
+            <p id="mood-feedback" class="mood-feedback" role="status" aria-live="polite"></p>
+        </div>
+    </section>
 
         <nav class="nav">
             <div class="nav-glass"></div>

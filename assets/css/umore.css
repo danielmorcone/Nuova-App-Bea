@@ -1,0 +1,129 @@
+/* Umore scorre nel suo pannello, sopra le onde e con spazio per la navbar. */
+.home-page[data-active-tab="umore"] { touch-action: pan-y pinch-zoom; }
+.mood-screen {
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y pinch-zoom;
+    -webkit-overflow-scrolling: touch;
+    color: var(--color-ink);
+    /* La navbar è già sollevata dal fondo: non sommare nuovamente la safe area. */
+    padding: calc(env(safe-area-inset-top) + 1.5rem) 1rem calc(13dvh + var(--home-nav-bottom) + .75rem);
+}
+.mood-content { width: min(100%, 35rem); margin: 0 auto; }
+.mood-header { text-align: center; margin: 0 0 1.5rem; }
+.mood-header h1 { font-size: clamp(1.8rem, 7vw, 2.3rem); font-weight: 600;}
+.mood-header p { margin-top: .6rem; font-size: .88rem; line-height: 1.7; color: #74657f; overflow: hidden; }
+.mood-screen.is-active .mood-header p { animation: mood-description-fade 2.5s ease 5s forwards; }
+@keyframes mood-description-fade {
+    from { opacity: 1; max-height: 3.5em; margin-top: .6rem; }
+    to { opacity: 0; max-height: 0; margin-top: 0; }
+}
+.mood-card {
+    border: 2px solid #FCDBEF;
+    border-radius: 1.8rem;
+    background: linear-gradient(to top, #FFF4FA 0%, #FFF 100%);
+    box-shadow: 0 6px 22px rgba(119, 67, 105, .08);
+    padding: 1rem;
+}
+.mood-calendar__toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: .7rem; gap: .5rem; }
+.mood-calendar__toolbar h2 { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; text-transform: capitalize; font-size: 1rem; font-weight: 500; padding: 0.5rem 1.2rem ; background-color: #FDE3F3; border-radius: 2rem;}
+.mood-month-label { color: inherit; font-weight: inherit; white-space: nowrap; }
+.mood-calendar__toolbar h2 .bi { flex-shrink: 0; color: var(--color-accent); padding-right: 0.2rem;}
+@media (max-width: 380px) {
+    .mood-calendar__toolbar h2 { padding: .5rem .65rem; font-size: .82rem; }
+}
+.mood-screen button { font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.mood-month-button {
+    display: grid; place-items: center; width: 2.75rem; height: 2.75rem;
+    border: 0; border-radius: 50%; background: var(--color-pink-soft); color: var(--color-ink); font-size: 1.6rem !important;
+    transition: background .2s ease, transform .2s ease;
+}
+.mood-month-button:active { transform: scale(.94); background: var(--color-pink-soft); }
+.mood-month-button:disabled { opacity: .3; cursor: default; }
+.mood-calendar button:disabled { pointer-events: none; }
+.mood-weekdays, .mood-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: .2rem; }
+.mood-weekdays { margin-bottom: .3rem; text-align: center; font-size: .7rem; }
+.mood-weekdays span { color: #b4aab7; font-weight: 600;}
+.mood-day {
+    position: relative; display: grid; place-items: center; min-width: 0; height: 2.75rem;
+    border: 1.5px solid transparent; border-radius: .9rem; background: transparent;
+    color: var(--color-ink); font-size: .85rem !important;
+    transition: background .25s ease, border-color .25s ease, transform .25s ease;
+}
+.mood-screen .mood-day:not(:disabled) { font-weight: 600; }
+.mood-screen .mood-day:disabled { font-weight: 400; }
+.mood-day.has-mood { font-size: 1.55rem !important; }
+.mood-day[aria-current="date"]::after {
+    content: ''; position: absolute; bottom: .18rem; width: .25rem; height: .25rem;
+    border-radius: 50%; background: var(--color-accent);
+}
+.mood-day.is-selected { background: #FDD2ED; color: var(--color-accent); }
+.mood-day:active:not(:disabled) { transform: scale(.92); }
+.mood-day:disabled { color: #b4aab7; cursor: default; }
+.mood-screen button:focus-visible, .mood-note:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+.mood-panel { margin-top: 1.1rem; min-height: 20rem; padding: 1.35rem; text-align: center; }
+.mood-panel.is-reading { min-height: 0; }
+.mood-date { color: var(--color-ink); font-size: .72rem; padding: 0.5rem 1.5rem; background-color: #FDE3F3; border-radius: 2rem; margin: 0 auto; display: inline-block; }
+.mood-date::first-letter { text-transform: uppercase; }
+.mood-panel-title + .mood-date { margin-top: .6rem; }
+.mood-panel-title { font-size: 1.2rem; font-weight: 500; }
+.mood-options { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .2rem; margin: 1.2rem 0 1.5rem; border: 0; }
+.mood-option {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .45rem;
+    min-width: 0; min-height: 5rem; padding: .2rem 0; border: 0; border-radius: 1rem;
+    background: transparent; color: var(--color-ink);
+    opacity: .65; transition: opacity .3s ease;
+}
+.mood-option[aria-pressed="true"] { opacity: 1; }
+.mood-option__emoji {
+    display: grid; place-items: center; width: 100%; max-width: 4rem; aspect-ratio: 1;
+    border-radius: 50%; font-size: clamp(2rem, 11.5vw, 3.5rem); line-height: 1; color: inherit;
+    box-shadow: inset 0 0 0 3px transparent;
+    transition: box-shadow .25s ease, background-color .25s ease;
+}
+.mood-option[aria-pressed="true"] .mood-option__emoji {
+    box-shadow: inset 0 0 0 3px var(--color-selector);
+}
+.mood-option__label {
+    color: inherit; font-size: clamp(.6rem, 2.15vw, .8rem); font-weight: 500; white-space: nowrap;
+    transform-origin: center top; transition: transform .3s cubic-bezier(.22, 1, .36, 1);
+}
+.mood-option[aria-pressed="true"] .mood-option__label { transform: scale(1.16); }
+.mood-note-label { display: block; text-align: left; font-size: .87rem; margin-bottom: 1rem; padding-left: .2rem; font-weight: 500;}
+.mood-note {
+    display: block; width: 100%; min-height: 7rem; padding: .9rem; border: 1px solid #F2D6E6;
+    border-radius: 1.1rem; background: #fffbfe; color: var(--color-ink); font: inherit; font-size: 1rem;
+    line-height: 1.6; resize: vertical; user-select: text; -webkit-user-select: text; touch-action: auto;
+}
+.mood-note::placeholder { color: #8d7b92; }
+.mood-button {
+    display: inline-flex; align-items: center; justify-content: center; width: 100%; min-height: 3.3rem;
+    margin-top: 1.1rem; padding: .7rem; border: 2px solid #fff; border-radius: var(--radius-pill);
+    background: linear-gradient(var(--color-pink), var(--color-pink-deep)); color: #fff;
+    box-shadow: var(--shadow-button); font-size: .95rem !important; transition: transform .2s ease, opacity .2s ease;
+}
+.mood-screen .mood-form .mood-button { font-weight: 500; }
+.mood-button:active { transform: scale(.97); }
+.mood-button:disabled { opacity: .45; cursor: default; box-shadow: none; }
+.mood-button--secondary { background: #fbedf5; color: var(--color-ink); box-shadow: 0 3px 12px #794c6c12; }
+.mood-screen .mood-button--secondary { font-weight: 500; gap: .45rem; color: #74657f;}
+.mood-button--secondary .bi-pencil-fill { padding-right: .2rem; }
+.mood-saved-face { font-size: 3rem; margin: 1rem 0 .5rem; }
+.mood-saved-note { white-space: pre-wrap; overflow-wrap: anywhere; text-align: left; font-size: .95rem; line-height: 1.8; margin: 1.3rem 0; user-select: text; -webkit-user-select: text; }
+.mood-feedback { min-height: 1.7rem; margin-top: .8rem; text-align: center; font-size: .85rem; font-weight: 500; color: var(--color-accent); }
+.mood-feedback { transition: opacity .7s ease; }
+.mood-feedback.is-fading-out { opacity: 0; }
+.mood-feedback:empty { min-height: 0; margin-top: 0; }
+.mood-storage-error { margin-top: 1rem; padding: 1rem; border-radius: 1rem; background: #fff; font-size: .85rem; line-height: 1.6; }
+.mood-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.mood-panel-enter { animation: mood-panel-enter .4s ease both; }
+.mood-month-enter { animation: mood-panel-enter .35s ease both; }
+.mood-emoji-selected { animation: mood-choice .35s ease both; }
+.mood-save-confirmed { animation: mood-saved .6s ease both; }
+@keyframes mood-panel-enter { from { opacity: .1; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes mood-choice { 50% { transform: scale(1.12); } }
+@keyframes mood-saved { 50% { box-shadow: 0 0 0 4px #ffd4ee90; } }
+@media (prefers-reduced-motion: reduce) {
+    .mood-screen, .mood-screen *, .mood-screen *::after { animation: none !important; transition: none !important; }
+    .mood-screen.is-active .mood-header p { animation: mood-description-fade .01ms linear 5s forwards !important; }
+}

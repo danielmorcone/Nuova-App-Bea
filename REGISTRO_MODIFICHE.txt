@@ -3,13 +3,13 @@ REGISTRO MODIFICHE — APP BEA / RESPIRA.
 
 Questo file riassume le modifiche realizzate nel progetto dall'avvio del lavoro.
 Va aggiornato ogni volta che vengono apportate nuove modifiche.
-Ultimo aggiornamento: 11 novembre 2026.
+Ultimo aggiornamento: 12 novembre 2026.
 
 STRUTTURA E STRUMENTI
 - Il progetto è organizzato in pagine HTML, fogli CSS, script JavaScript e moduli riutilizzabili sotto assets/ e pages/.
 - I percorsi delle pagine negli esercizi sono stati allineati al server che serve il progetto dalla cartella principale; i meta viewport supportano safe area e schermo iPhone.
 - I valori principali di colore, raggi e animazioni sono raccolti nelle variabili CSS condivise.
-- La PWA usa manifest.json e sw.js; la cache è stata aggiornata insieme alle nuove pagine e risorse (versione attuale: app-v90).
+- La PWA usa manifest.json e sw.js; la cache è stata aggiornata insieme alle nuove pagine e risorse (versione attuale: app-v107).
 - Sono disponibili Avvia-App-Bea.bat e Ferma-App-Bea.bat per avviare e fermare il server locale. Il server sceglie una porta libera se la 8000 è occupata e mostra l'indirizzo utilizzabile da telefono sulla stessa rete Wi-Fi.
 - Le impostazioni locali di VS Code sono state aggiornate per rendere più visibili i suggerimenti durante la scrittura del codice.
 
@@ -60,6 +60,7 @@ GIOCO DELLE BOLLE
 - La status bar di Bolle è tornata allo stile bianco predefinito; il layer video mantiene lo sfondo nero durante la riproduzione.
 - Il pulsante “Torna alla home” del video usa ora il gradiente rosa/fucsia, il bordo chiaro e le dimensioni del pulsante principale della schermata finale.
 - Il cuore decorativo del pulsante Home è un SVG inline, così non dipende da Bootstrap Icons o da librerie esterne.
+- L'introduzione del Gioco delle bolle resta visibile più a lungo e il movimento del titolo verso l'alto è più lento; il gioco inizia al termine della transizione.
 
 RISORSE AUDIO DA AGGIUNGERE PER LE BOLLE
 - assets/sounds/bubble-pop-small.mp3
@@ -67,6 +68,46 @@ RISORSE AUDIO DA AGGIUNGERE PER LE BOLLE
 - assets/sounds/bubble-pop-large.mp3
 - assets/sounds/bubble-pop-golden.mp3
 
+DIARIO UMORE
+- Prima dell'intervento è stato creato il riferimento Git ripristino-prima-umore-20261111, comprendendo le modifiche già presenti senza cambiare i file di lavoro.
+- La scheda Umore contiene titolo, calendario italiano da lunedì a domenica e pannello inferiore. Permette cinque emozioni, note facoltative multilinea, visualizzazione delle giornate salvate e modifica con valori precedenti già inseriti.
+- Ogni data locale YYYY-MM-DD ha una sola registrazione; le date future sono disabilitate. Il calendario mostra subito l'emoji salvata e gestisce mesi, anni e bisestili. Le bozze restano associate alla giornata durante la navigazione, finché l'app rimane aperta.
+- mood-store.js gestisce localStorage separatamente dall'interfaccia umore.js. Sono salvati data, identificativo emozione, nota e timestamp; gli errori di storage non producono falsi salvataggi e un archivio danneggiato non viene sovrascritto.
+- umore.css riprende colori e font esistenti con transizioni, scorrimento verticale, margine per la navbar, focus visibile e supporto al movimento ridotto.
+- La navigazione esistente ora rende non interattivi i pannelli nascosti ed esclude le textarea dallo swipe tra schede. Audio ed esercizi non sono stati modificati.
+- È stato corretto il percorso del service worker da assets/sw.js alla radice sw.js e sono stati aggiunti alla cache solo i nuovi file necessari per Umore.
+- Test eseguiti: 7 test Node su date, salvataggi, modifiche, persistenza, dati danneggiati e storage bloccato; test in Chrome headless su interfaccia, mesi/anni, bozze, ricaricamento, responsive 320/393/1000 px, cache e ricaricamento offline, movimento ridotto. Nessuna eccezione runtime rilevata. Passati anche i controlli essenziali offline di Respiro, Radicamento e Bolle.
+- Da verificare su iPhone: tastiera e chiusura del campo note, safe area, gesture e scorrimento nella PWA installata. Non è stato eseguito un riavvio fisico del telefono.
+
 NOTE PER I PROSSIMI AGGIORNAMENTI
+- “Modifiche salvate!” resta visibile 2 secondi e poi si dissolve in 700 ms; dopo la dissolvenza viene rimosso anche lo spazio occupato. Un nuovo messaggio o un cambio di data annulla il timer precedente.
+- Il messaggio dopo una modifica del diario è “Modifiche salvate!”, senza cuore; il testo di conferma usa font-weight: 500 e var(--color-accent).
+- Il titolo Umore usa l'emoji del cuore crescente 💗 al posto dell'icona Bootstrap, con la resa nativa del dispositivo.
+- Il paragrafo sotto il titolo Umore inizia a dissolversi dopo 5 secondi nella scheda: in 2,5 secondi scompaiono sia il testo sia lo spazio occupato, facendo risalire gradualmente calendario e pannello. Il conteggio riparte a ogni ingresso nella scheda; rispettata la preferenza di movimento ridotto.
+- Il pannello delle giornate salvate si adatta all'altezza del contenuto, senza altezza minima: lo spazio sotto “Modifica la giornata” è sempre il padding previsto, anche senza una nota.
+- Aggiunto gap: 0.45rem tra icona e testo del pulsante “Modifica la giornata”.
+- Il pulsante “Modifica la giornata” usa font-weight: 500 e l'icona Bootstrap bi-pencil-fill con padding-right: 0.2rem.
+- Il calendario riflette anche la bozza: selezionando un'emozione compare la relativa emoji; deselezionandola torna il numero del giorno con le dimensioni corrette, anche cambiando mese. Le registrazioni già salvate restano persistenti fino a un nuovo salvataggio.
+- Nel selettore Umore l'etichetta scelta si ingrandisce dolcemente del 16%; le opzioni non selezionate hanno opacità 0.65, quella attiva mantiene opacità piena. Un secondo tocco sull'emozione attiva la deseleziona e disabilita Salva, conservando la nota nella bozza.
+- Ingrandite le cinque emoji del modulo Umore e rimossi i riquadri dei pulsanti. L'emozione selezionata è circondata da un anello nel colore var(--color-selector); restano etichette e animazione di selezione, con dimensioni adattate alla larghezza dello schermo.
+- Il pulsante di salvataggio del diario Umore usa font-weight: 500, anche durante la modifica di una giornata.
+- Ridotto lo scorrimento vuoto in fondo a Umore: rimossa la safe area conteggiata due volte, ridotto il margine sotto il contenuto e azzerato lo spazio del messaggio di conferma quando è vuoto. Resta lo spazio necessario per raggiungere i pulsanti sopra la navbar.
+- Nel modulo Umore la data è ora sotto la domanda “Come ti senti oggi?” (o la domanda per il giorno passato), mantenendo il riquadro rosa e una spaziatura dedicata.
+- Il numero del giorno selezionato nel calendario usa var(--color-accent).
+- Impostato font-weight: 600 solo per i giorni selezionabili nel calendario Umore; i giorni futuri grigi mantengono peso 400.
+- L'icona calendario nel riquadro del mese usa var(--color-accent).
+- Aggiunta l'icona bi-calendar prima del mese, all'interno dello stesso riquadro rosa. Il cambio mese aggiorna solo l'etichetta, mantenendo l'icona e l'allineamento; spaziatura adattata anche agli schermi stretti.
+- Il server locale aggiunge dev-client.js alle pagine servite: ogni salvataggio CSS aggiorna il foglio senza ricaricare o perdere le bozze. HTML, JavaScript e altri asset provocano un reload con ripristino della scheda selezionata. Il controllo avviene circa ogni secondo, solo in sviluppo, senza dipendenze. HTML e JavaScript usano ora la rete con fallback offline nel service worker, evitando reload con codice vecchio.
+- Verificato in Chrome il cambio reale di un CSS temporaneo senza ricaricamento della pagina; passati anche i test del diario, della navigazione e del caricamento offline.
+- Lo swipe tra schede funziona anche iniziando sopra i giorni o le frecce del calendario Umore. I gesti verticali rimangono scroll e il rilascio dopo uno swipe non seleziona accidentalmente una data. I campi di testo restano esclusi dal gesto di navigazione.
+- I fogli CSS dell'app vengono ora richiesti prima alla rete senza usare la cache HTTP e salvati nella cache PWA; se la rete non è disponibile, viene riutilizzata la copia offline. Le modifiche grafiche salvate diventano quindi visibili ricaricando, senza incrementare manualmente la versione per ogni ritocco CSS.
+- Al termine di Radicamento, “No, continua” conduce al Gioco delle bolle invece di ripetere Respiro, mantenendo la transizione di uscita esistente.
+- Intensificate leggermente le ombre interne ed esterna della navbar per aumentare la profondità del vetro, mantenendo sfumature morbide e riflesso bianco.
+- Aggiunta un'ombra interna delicata alla navbar, con toni grigio-rosati, per dare profondità al vetro mantenendo il riflesso bianco sul bordo.
+- Aggiunto un riflesso bianco sottile e sfumato sul bordo esterno della navbar, più luminoso negli angoli, lasciando trasparente la superficie centrale.
+- Affinato il vetro della navbar dopo il confronto su iPhone: rimossi bordi concentrici, riflessi forti e distorsione SVG; ridotta la saturazione, ammorbidite le ombre e integrato il selettore con un riflesso diffuso. La barra torna più vicina alla versione originale, con trasparenza e profondità delicate.
+- Nuova navbar liquid glass in navbar-glass.css: materiale trasparente, sfondo sfocato e saturo, riflessi stratificati, bordi luminosi e selettore a lente. Il filtro SVG distorce soltanto il fondale dove supportato; Safari iOS usa il materiale CSS. Nessuna variazione alla geometria o alla navigazione; previsti fallback per trasparenza ridotta e assenza di backdrop-filter.
+- Riparato style.css dopo una modifica accidentale che aveva unito i blocchi del pulsante e della navbar e inserito frammenti CSS incompleti. Ripristinato il foglio funzionante con la navbar originale.
+- Annullate tutte le modifiche liquid glass della navbar: ripristinati esattamente sfondo, strato rosa sfumato, selettore e ombre originali precedenti all'intervento.
 - A ogni modifica futura, aggiungere qui una voce nella sezione interessata, mantenendo questo riepilogo aggiornato.
-- Restano da completare i contenuti di Noi e Umore e da rimuovere i comandi temporanei quando non serviranno più.
+- Restano da completare i contenuti di Noi e da rimuovere i comandi temporanei quando non serviranno più.

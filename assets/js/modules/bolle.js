@@ -722,6 +722,6 @@ export function setupBubbleGame() {
     schedule(() => {
       if (isEnding) return;
       startGame();
-    }, reducedMotion ? 520 : 1370);
-  }, reducedMotion ? 1500 : 2500);
+    }, reducedMotion ? 520 : 2020);
+  }, reducedMotion ? 1500 : 3200);
 }

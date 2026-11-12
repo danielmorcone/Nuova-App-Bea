@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="it"><meta charset="utf-8"><title>Verifica Umore</title>
+<style>body{margin:0;background:#fafafa;font-family:sans-serif}iframe{width:393px;height:852px;border:0}pre{white-space:pre-wrap}</style>
+<iframe id="app" src="../index.html" title="App Bea in prova"></iframe><pre id="result">Test in corso…</pre>
+<script type="module">
+// Usare un profilo browser separato: le prove scrivono dati dimostrativi nel diario.
+const frame = document.querySelector('#app');
+const results = [];
+const errors = [];
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+const check = (ok, label) => { if (!ok) throw new Error(label); results.push('PASS ' + label); };
+let doc;
+const q = selector => doc.querySelector(selector);
+const click = selector => { const node = q(selector); if (!node) throw new Error('Elemento assente: ' + selector); node.click(); };
+const ready = async () => {
+  for (let i = 0; i < 100; i++) {
+    doc = frame.contentDocument;
+    if (doc?.querySelector('#mood-days button') && doc.body.dataset.activeTab) return;
+    await wait(100);
+  }
+  throw new Error('App non inizializzata');
+};
+try {
+  await ready();
+  await frame.contentWindow.navigator.serviceWorker.ready;
+  await wait(1200);
+  await ready();
+  frame.contentWindow.addEventListener('error', event => errors.push(event.message));
+  frame.contentWindow.addEventListener('unhandledrejection', event => errors.push(String(event.reason)));
+  check(doc.body.dataset.activeTab === 'home', 'Home iniziale');
+  click('.umore');
+  await wait(500);
+  check(!q('#umore-screen').inert && q('#home-screen').inert, 'Apertura Umore e pannelli inattivi esclusi dal focus');
+  const today = q('.mood-day.is-selected').dataset.date;
+  const header = q('.mood-header');
+  const calendar = q('.mood-calendar');
+  check(q('#mood-month').textContent.includes(String(new Date().getFullYear())), 'Mese e anno correnti');
+  check(q('.mood-day[aria-current="date"]').dataset.date === today, 'Oggi selezionato');
+  check(q('.mood-form button[type="submit"]').disabled, 'Nessun salvataggio senza emozione');
+  click('.mood-option:nth-of-type(4)');
+  check(!q('.mood-form button[type="submit"]').disabled, 'Selezione emozione abilita Salva');
+  click('.mood-option:nth-of-type(4)');
+  check(!q('.mood-option[aria-pressed="true"]') && q('.mood-form button[type="submit"]').disabled, 'Secondo tocco deseleziona e disabilita Salva');
+  check(q(`[data-date="${today}"]`).textContent === String(Number(today.slice(-2))) && !q(`[data-date="${today}"]`).classList.contains('has-mood'), 'Deselezione ripristina il numero nel calendario');
+  click('.mood-option:nth-of-type(4)');
+  click('.mood-form button[type="submit"]');
+  check(q('.mood-panel-title').textContent === 'Bene' && !q('#mood-note'), 'Salvataggio senza nota e modalità lettura');
+  check(q(`[data-date="${today}"]`).textContent === '🙂', 'Emoji aggiornata subito nel calendario');
+  click('#mood-panel button');
+  check(q('[aria-pressed="true"].mood-option')?.textContent.includes('Bene'), 'Modifica con umore precedente selezionato');
+  click('.mood-option:nth-of-type(4)');
+  check(q(`[data-date="${today}"]`).textContent === String(Number(today.slice(-2))), 'Deselezione in modifica ripristina il numero del giorno');
+  click('.mood-option:nth-of-type(4)');
+  const note = 'Una nota di prova ♡\nSeconda riga <b>testo</b>';
+  q('#mood-note').value = note;
+  q('#mood-note').dispatchEvent(new Event('input', { bubbles: true }));
+  click('.mood-option:nth-of-type(5)');
+  click('.mood-form button[type="submit"]');
+  check(q('.mood-saved-note').textContent === note && q('.mood-panel-title').textContent === 'Benissimo', 'Modifica nota multilinea ed emozione');
+  check(!q('.mood-saved-note b'), 'Nota trattata come testo sicuro');
+  check(q('.mood-header') === header && q('.mood-calendar') === calendar, 'Titolo e calendario mantenuti');
+  check([...doc.querySelectorAll('.mood-day')].filter(button => button.dataset.date > today).every(button => button.disabled), 'Date future disabilitate');
+  check(q('#mood-next').disabled, 'Navigazione al mese futuro bloccata');
+  const anotherDay = [...doc.querySelectorAll('.mood-day')].find(button => !button.disabled && button.dataset.date !== today);
+  if (anotherDay) {
+    anotherDay.click();
+    check(q('#mood-note').value === '' && q('.mood-header') === header && q('.mood-calendar') === calendar, 'Selezione di un altro giorno senza ricreare il calendario');
+    click(`[data-date="${today}"]`);
+    check(q('.mood-saved-note').textContent === note, 'Riapertura della giornata compilata');
+  }
+  click('#mood-prev');
+  const past = q('.mood-day.is-selected').dataset.date;
+  check(past < today && q('#mood-note').value === '', 'Mese passato e giornata vuota');
+  click('.mood-option:nth-of-type(3)');
+  q('#mood-note').value = 'Bozza del passato';
+  q('#mood-note').dispatchEvent(new Event('input', { bubbles: true }));
+  click('#mood-next');
+  check(q('.mood-saved-note').textContent === note, 'Nessuna bozza applicata al giorno sbagliato');
+  click('#mood-prev');
+  check(q('#mood-note').value === 'Bozza del passato', 'Bozza conservata cambiando mese');
+  click('.mood-form button[type="submit"]');
+  check(q('.mood-saved-note').textContent === 'Bozza del passato', 'Salvataggio giornata passata');
+  // Dicembre/gennaio attraverso la UI.
+  for (let i = 0; i < Number(past.slice(5, 7)); i++) click('#mood-prev');
+  check(q('#mood-month').textContent.includes('dicembre'), 'Navigazione oltre il cambio anno');
+  click('#mood-next');
+  check(q('#mood-month').textContent.includes('gennaio'), 'Ritorno a gennaio');
+  frame.contentWindow.location.reload();
+  await wait(1000);
+  await ready();
+  click('.umore');
+  check(q('.mood-saved-note').textContent === note, 'Persistenza dopo ricaricamento');
+  click('#mood-prev');
+  check(q('.mood-saved-note').textContent === 'Bozza del passato', 'Persistenza giornata passata');
+  click('.noi');
+  check(doc.body.dataset.activeTab === 'noi' && q('#umore-screen').inert, 'Navigazione Noi');
+  click('.home');
+  check(!q('#home-screen').inert && q('.btn'), 'Ritorno Home e pulsante supporto presente');
+  click('.umore');
+  await wait(500);
+  check(q('#umore-screen').scrollWidth <= q('#umore-screen').clientWidth, 'Nessun overflow orizzontale a 393 px');
+  q('#umore-screen').scrollTop = q('#umore-screen').scrollHeight;
+  check(q('#mood-panel button').getBoundingClientRect().bottom < q('.nav').getBoundingClientRect().top, 'Pulsante accessibile sopra la navbar dopo lo scroll');
+  frame.style.width = '320px';
+  check(q('#umore-screen').scrollWidth <= q('#umore-screen').clientWidth, 'Nessun overflow orizzontale a 320 px');
+  frame.style.width = '1000px';
+  check(q('.mood-content').getBoundingClientRect().width <= 561, 'Larghezza contenuta su desktop');
+  frame.style.width = '393px';
+  for (const path of ['pages/calma.html', 'pages/radicamento.html', 'pages/bolle.html']) {
+    check((await fetch('../' + path)).ok, path + ' disponibile');
+  }
+  for (const path of ['assets/css/umore.css', 'assets/js/modules/umore.js', 'assets/js/modules/mood-store.js']) {
+    check(Boolean(await caches.match(new URL('../' + path, location.href))), path + ' presente nella cache offline');
+  }
+  const swipeDay = q('.mood-day:not(:disabled)');
+  const selectedBeforeSwipe = q('.mood-day.is-selected').dataset.date;
+  const pointer = (target, type, x, y) => target.dispatchEvent(new frame.contentWindow.PointerEvent(type, {
+    bubbles: true, pointerId: 9, isPrimary: true, pointerType: 'touch', button: 0, clientX: x, clientY: y
+  }));
+  pointer(swipeDay, 'pointerdown', 70, 250);
+  pointer(swipeDay, 'pointermove', 180, 255);
+  pointer(swipeDay, 'pointerup', 210, 255);
+  check(doc.body.dataset.activeTab === 'home', 'Swipe dal pulsante di un giorno verso Home');
+  swipeDay.dispatchEvent(new frame.contentWindow.MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }));
+  check(q('.mood-day.is-selected').dataset.date === selectedBeforeSwipe, 'Swipe senza selezione accidentale del giorno');
+  click('.umore');
+  const monthBeforeSwipe = q('#mood-month').textContent;
+  pointer(q('#mood-prev'), 'pointerdown', 70, 180);
+  pointer(q('#mood-prev'), 'pointerup', 210, 185);
+  q('#mood-prev').dispatchEvent(new frame.contentWindow.MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }));
+  check(doc.body.dataset.activeTab === 'home' && q('#mood-month').textContent === monthBeforeSwipe, 'Swipe dalla freccia senza cambio mese accidentale');
+  click('.umore');
+  pointer(swipeDay, 'pointerdown', 70, 250);
+  pointer(swipeDay, 'pointermove', 75, 300);
+  pointer(swipeDay, 'pointerup', 180, 310);
+  check(doc.body.dataset.activeTab === 'umore', 'Gesto iniziato verticalmente non cambia scheda');
+  pointer(swipeDay, 'pointerdown', 70, 250);
+  pointer(swipeDay, 'pointercancel', 80, 255);
+  pointer(swipeDay, 'pointerup', 210, 255);
+  check(doc.body.dataset.activeTab === 'umore', 'Gesto annullato non cambia scheda');
+  check(errors.length === 0, 'Nessun errore runtime rilevato: ' + errors.join('; '));
+  document.querySelector('#result').textContent = results.join('\n') + '\nTUTTI I TEST SUPERATI';
+} catch (error) {
+  document.querySelector('#result').textContent = results.join('\n') + '\nFAIL ' + error.stack;
+}
+</script></html>

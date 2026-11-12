@@ -1,5 +1,5 @@
 if ('serviceWorker' in navigator) {
-  const serviceWorkerUrl = new URL('../../sw.js', import.meta.url);
+  const serviceWorkerUrl = new URL('../../../sw.js', import.meta.url);
 
   navigator.serviceWorker.register(serviceWorkerUrl).then(registration => {
     registration.addEventListener('updatefound', () => {
